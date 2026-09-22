@@ -1,0 +1,11 @@
+- [헤드리스 Chrome IntersectionObserver 검증 한계](headless-intersection-observer-limitation.md) — 프로그래매틱 scrollTo 후 IO 콜백이 재발화하지 않음. dump-dom/screenshot 모두 영향받음
+- [receipt 영수증 리빌 로직 구조](gopumgyeok-receipt-reveal-logic.md) — 2026-09-09 기준 IO 아닌 scroll 리스너 방식으로 변경됨, 카운트업 dump-dom 실측 성공 사례 포함
+- [헤드리스 Chrome 프로세스 종료 지연](headless-chrome-hang-after-screenshot.md) — --screenshot 완료 후에도 프로세스가 안 죽는 경우가 흔함, kill -9 로 강제 종료 필요
+- [헤드리스 최소 뷰포트 폭 500px 클램프](headless-min-viewport-width-500px.md) — --window-size 폭 500px 미만은 무시되고 500px로 렌더된 뒤 작은 크기로 크롭돼 가짜 텍스트 오버플로우로 보임
+- [초대형 풀페이지 캡처 시 fixed 모달 어둡게 겹침](tall-viewport-fixed-modal-confound.md) — #menu 진입으로 문의 시트가 자동 열려 그 아래 섹션 전체가 40% 밝기로 어둡게 찍힘, 색상 비교 전 백드롭 display:none 주입 필요
+- [review-phone 목업 좌표 실측값](gopumgyeok-review-phone-mockup-coords.md) — iphone.png(1622x3238) 알파 스캔으로 뽑은 정확한 홀 좌표(6.5/3.4/87.6/93.9%), 이미지 재교체 시 무효
+- [검증 도중 파일 실시간 수정](gopumgyeok-live-edit-during-verification.md) — 작업 지시문의 "현재 상태" 설명이 검증 시작 전에 이미 낡을 수 있음, 검증 직전 CSS/HTML 재확인 필수
+- [헤드리스로 클릭 인터랙션 검증하는 법](gopumgyeok-inquiry-fab-click-through-headless.md) — puppeteer 없이 _debug 사본에 setTimeout+.click() 주입, getBoundingClientRect/computedStyle을 화면에 찍어 확인
+- [큰 프로그래매틱 스크롤 후 스크린샷 블랙프레임](headless-large-scroll-screenshot-black-frame.md) — ~5500px 점프+--screenshot 조합이 검정 프레임을 냄, dump-dom은 안전. 클래스 직접 주입 우회법 포함
+- [포트 8765를 형제 프로젝트와 공유](gopumgyeok-shared-port-8765-with-sibling-project.md) — 0007-B 등 다른 서버가 먼저 bind하면 200이 와도 엉뚱한 프로젝트 HTML이 찍힘, curl로 콘텐츠 확인 필수
+- [셀프바 원형 이미지 링 두께 픽셀 스캔 검증법](gopumgyeok-selfbar-ring-pixel-scan-technique.md) — 흰 여백은 CSS 링이 아니라 jpg에 구운 것, PIL 스캔라인으로 순백 구간 px 측정해야 육안 오판 방지

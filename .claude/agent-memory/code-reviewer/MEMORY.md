@@ -1,0 +1,2 @@
+- [Typography rule is 18-96px, not shadcn scale](typography_rule_is_18_96px.md) — role prompt's "shadcn 타입 스케일" claim is stale; trust CLAUDE.md/docs/design.md live
+- [hidden attribute vs class display cascade](hidden_attr_vs_display_cascade.md) — `.notice-bar{display:flex}` overrides `[hidden]`; toggle components need opacity/visibility hiding

@@ -1,0 +1,2 @@
+- [로컬 도구 현황](local-tooling.md) — sips/cwebp 있음, pngquant/imagemagick 없음(임의 설치 금지)
+- [셀프바 썸네일 표준 규격](selfbar-thumbnail-convention.md) — 180×180 JPEG 5~10KB, 2026-09-16 5장 리사이즈 사례

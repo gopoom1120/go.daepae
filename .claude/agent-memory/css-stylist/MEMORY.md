@@ -1,0 +1,2 @@
+- [형제결합자로 콘텐츠 밀기 + 헤더 높이 CDP 실측](feedback_no_main_wrapper_sibling_push.md) — <main> 없는 flat 구조에서 fixed 요소 추가 시 쓰는 CSS-only 패턴
+- [폰트 크기 규칙 문서 vs 실제 코드 불일치](project_fontsize_rule_vs_actual.md) — CLAUDE.md 18px~96px 규칙이 이미 모달 UI 텍스트(13~15px)와 어긋남
