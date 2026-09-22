@@ -16,3 +16,4 @@
 - [빠른 반복 디자인 요청 대응](feedback_rapid-iteration-design-requests.md) — 짧은 연속 요청으로 한 요소를 여러 번 재디자인할 때: 기존 keyframe 이름 재사용, 단순함으로 수렴하는 경향, 국소 변경엔 풀 검증 생략
 - [CSS 전역vs로컬 스코프 특이성 함정](feedback_css-specificity-scoped-vs-global.md) — 05 폼은 전역 label/input 셀렉터, 문의 모달은 같은 태그를 로컬 재스코프 — 공용 컴포넌트는 속성 전부를 다시 선언해야 한다
 - [CMS 백오피스 연동 완료](gopumgyeok-cms-integration.md) — 2026-09-17, 문의폼 실전송+팝업 신규 구현, script.js가 dataFetch.js/regexr.js로 분리(CLAUDE.md 미반영 주의)
+- [Next.js 마이그레이션 시작](gopumgyeok-nextjs-migration.md) — 2026-09-22, 저장소 루트에 Next.js 공존 시작(정적 사이트 그대로 유지), 레거시 CSS는 Tailwind 재작성 없이 global import, 버전은 go.daepae.cms.api와 동기화

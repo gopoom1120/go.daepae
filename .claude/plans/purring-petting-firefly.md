@@ -1,62 +1,120 @@
-# go.daepae — Next.js 환경 세팅 (기술스택 전환 1단계)
+# go.daepae — 콘텐츠 마이그레이션 (index.html → Next.js 컴포넌트)
 
 ## Context
 
-`go.daepae`는 지금까지 빌드 도구 없는 정적 파일(`index.html` + `assets/` + `data/content.json`)로만 구성된 랜딩페이지였다. 사용자는 이 프론트엔드의 기술스택 전체를 형제 프로젝트 `go.daepae.cms.api`(고품격대패 프랜차이즈 CMS 어드민 백오피스, Next.js 14 App Router 기반)와 동일하게 맞추기로 했다 — 두 프로젝트가 결국 같은 백엔드(CMS API)를 공유하게 되므로, 프론트엔드도 같은 스택·컨벤션을 쓰는 편이 유지보수와 코드 재사용에 유리하기 때문이다.
+1단계(환경 세팅, 완료)로 저장소 루트에 Next.js 14.2.35 + TypeScript + Tailwind v4 환경이 이미 구축되어 있다(`src/app/page.tsx`는 아직 임시 플레이스홀더). 이번 단계는 실제 랜딩 콘텐츠 — `index.html`(436줄, 헤더+12개 섹션+오버레이 3종) + `assets/js/{script.js,dataFetch.js,regexr.js}`(총 882줄의 렌더링/인터랙션 로직) + `data/content.json` — 를 React 컴포넌트로 옮기는 작업이다.
 
-이번 작업은 그 전환의 **1단계, "환경 세팅"만**이다. 사용자가 명시적으로 요청한 범위:
-- 기존 정적 소스(`index.html`, `assets/`, `data/content.json`)는 **삭제하거나 손대지 않고 그대로 둔다** — 콘텐츠 마이그레이션은 다음 단계.
-- Next.js 프로젝트를 **저장소 루트**에 세팅한다(하위 폴더로 분리하지 않음).
-- 레퍼런스(`go.daepae.cms.api`)와 **동일 버전**의 패키지를 쓰되, CMS 어드민 전용 라이브러리(Supabase, TanStack Query, react-hook-form+zod, Tiptap, swagger-ui-react 등)는 지금 설치하지 않고 **핵심 스택만** 먼저 설치한다.
+기존 정적 사이트(`index.html`/`assets/`/`data/`)는 **손대지 않고 그대로 둔다** — 지난 세션에 확인한 대로 원본 사이트가 계속 살아있어야 한다는 전제다. Next.js 쪽은 `public/`, `src/data/`에 필요한 파일을 **복사**해서 독립적으로 구성한다.
 
-레퍼런스 프로젝트 조사 결과, ESLint/Prettier는 `package.json`에 의존성만 있고 실제 설정 파일이 없는 미완성 상태였다 — 이번 세팅에서는 그 부분을 실제로 동작하도록 채워 넣는다(레퍼런스의 결함까지 복제하지는 않음).
+사전 조사에서 확인한 핵심 사실:
+- `assets/js/dataFetch.js`/`regexr.js`는 CLAUDE.md 아키텍처 설명에 없는 헬퍼 모듈로, 문의폼 3곳(`#inquiryForm`/`#inquirySheetForm`/`#stickyInquiryForm`)이 실제로 `dataFetch('/franchise-inquiries', {method:'POST'})`를 통해 **CMS API(go.daepae.cms.api, 하드코딩된 `http://localhost:3001/api/v1`)에 실제 전송**하고 있고, `initPopup()`도 `/public/franchise-popups`를 실제로 fetch한다 — 이 부분은 "목업"이 아니라 실동작 연동이므로 그대로 옮긴다.
+- CSS(`init/fonts/animations/style.css`, `docs/design.md`에 픽셀 단위로 확정된 값들)는 **그대로 global import** — Tailwind 재작성 안 함.
+- 05 매장위치 캐러셀은 `swiper` npm 패키지(`swiper/react`)로 전환.
+- 이미지/폰트는 `public/assets/imgs`·`public/assets/fonts`로 복사(원본 유지), `data/content.json`은 `src/data/content.json`으로 복사.
+- CMS API 연동은 유지하되 base URL만 `NEXT_PUBLIC_CMS_API_BASE_URL` 환경변수로 뺀다.
 
-## 레퍼런스에서 가져오는 것 / 지금은 제외하는 것
+## 에셋/데이터 이동 (원본은 그대로, 복사만)
 
-**설치(핵심 스택, 레퍼런스와 동일 버전)**
-- `next@14.2.3`, `react@^18`, `react-dom@^18`
-- `typescript@^5`, `@types/node@^20`, `@types/react@^18`, `@types/react-dom@^18`
-- Tailwind v4: `tailwindcss@^4.3.3`, `@tailwindcss/postcss@^4.3.3`, `postcss@^8.5.19`, `autoprefixer@^10.5.4`, `tailwindcss-animate@^1.0.7`, `tw-animate-css@^1.4.0`
-- shadcn/ui 기반: `class-variance-authority@^0.7.1`, `clsx@^2.1.1`, `tailwind-merge@^3.6.0`, `lucide-react@^1.25.0`, `shadcn@^4.13.1`(CLI, devDependency)
-- Lint/Format(레퍼런스엔 없던 실제 설정 파일을 새로 작성): `eslint@^8`, `eslint-config-next@14.2.3`, `eslint-config-prettier@^10.1.1`, `eslint-plugin-prettier@^5.1.0`, `prettier@^3.1.1`
-- 패키지 매니저: **yarn** (레퍼런스와 동일, `yarn.lock`만 사용, npm 사용 안 함), `engines.node >=22.0.0`
+- `assets/imgs/*` → `public/assets/imgs/*` (경로 접두사만 바뀌므로 참조 시 `assets/imgs/X` → `/assets/imgs/X`로 슬래시만 추가하면 됨 — 폴더명 자체는 유지해 리스크 최소화)
+- `assets/fonts/*.woff2` → `public/assets/fonts/*.woff2`
+- `data/content.json` → `src/data/content.json`, 단 **이미지 경로 필드(`meat[].image`, `selfbar[].image`, `stores[].image`)에 선행 슬래시 추가**(`assets/imgs/X` → `/assets/imgs/X`)해서 복사 — JSX에서 `<img src={item.image}>`로 바로 쓸 수 있게
+- `assets/css/{init,fonts,animations,style}.css` → `src/styles/legacy/{init,fonts,animations,style}.css` 그대로 복사 후, 아래 `url()` 참조만 기계적으로 치환(디자인 값 자체는 절대 건드리지 않음):
+  - `fonts.css` 10곳: `url('../fonts/X')` → `url('/assets/fonts/X')`
+  - `style.css` 6곳(86, 217, 449, 586, 640행 — `meat_platter.jpg`/`generated.png`/`bg_map.png`/`con_bg.png`/`bg.png`): `url('../imgs/X')` → `url('/assets/imgs/X')`
+  - `style.css`의 인라인 `data:image/svg+xml,...` 배경(264~266, 320~323행)은 경로가 아니므로 건드리지 않음
 
-**지금 설치하지 않는 것** (필요해지는 마이그레이션 단계에서 그때그때 추가): `@supabase/*`, `@tanstack/react-query`, `react-hook-form`/`zod`/`@hookform/resolvers`, `@tiptap/*`, `swagger-ui-react`, `axios`, `next-themes`, `sonner`, `date-fns`, `react-day-picker`, 개별 `@radix-ui/*` 패키지(shadcn CLI로 컴포넌트 추가 시 자동 설치됨).
+## 새 의존성
 
-## 만들 파일
+- `swiper` (React 공식 컴포넌트 `swiper/react` + 모듈 `Navigation`/`Autoplay`/`EffectFade`/`Pagination`/`A11y`/`Keyboard` 사용, CSS는 `swiper/css`, `swiper/css/navigation`, `swiper/css/pagination`, `swiper/css/effect-fade`만 필요한 것만 import)
 
-저장소 루트에 아래를 신규 생성한다(기존 `index.html`/`assets/`/`data/`는 그대로 유지):
+## 컴포넌트/파일 구조
 
-- `package.json` — 위 의존성, `name: "go-daepae"`, scripts: `dev`(`next dev`), `build`, `start`, `lint`(`next lint`), `format`(`prettier --write "src/**/*.{ts,tsx}"`)
-- `next.config.mjs` — `reactStrictMode: true`만 있는 최소 설정(레퍼런스의 `transpilePackages`/`images.remotePatterns`는 해당 라이브러리 도입 시 추가)
-- `tsconfig.json` — 레퍼런스와 동일(`strict: true`, `paths: { "@/*": ["./src/*"] }`, `target: ES2015` 등)
-- `tailwind.config.ts` — `darkMode: 'class'`, `content`는 `src/app/**`, `src/components/**`만(레퍼런스의 죽은 `src/pages/**` 경로는 제외), shadcn 표준 색상 토큰 매핑 + `tailwindcss-animate` 플러그인
-- `postcss.config.mjs` — `@tailwindcss/postcss` + `autoprefixer`
-- `components.json` — shadcn CLI 설정, 레퍼런스와 동일한 alias 구조(`@/libs/utils`, `@/components/ui` 등), `baseColor: "neutral"`
-- `.eslintrc.json` — `next/core-web-vitals` + `prettier` 통합(레퍼런스에 없던 실제 설정을 신규 작성)
-- `.prettierrc` — 기본 포맷 규칙(singleQuote, semi, trailingComma 등)
-- `src/app/layout.tsx` — 최소 Root Layout(메타데이터만, `ThemeProvider`/`QueryProvider` 등은 해당 라이브러리 도입 전이므로 제외)
-- `src/app/page.tsx` — 임시 플레이스홀더 홈페이지("Next.js 환경 세팅 완료" 수준). **기존 랜딩 콘텐츠는 이번 단계에서 이식하지 않는다** — 다음 단계(콘텐츠 마이그레이션)에서 `index.html`/`data/content.json`을 컴포넌트로 옮긴다.
-- `src/app/globals.css` — Tailwind v4 `@import "tailwindcss"` + shadcn 표준 CSS 변수(oklch 기반) + `@theme inline`
-- `src/libs/utils.ts` — shadcn `cn()` 헬퍼(`clsx` + `tailwind-merge`)
-- `next-env.d.ts` — `next dev` 최초 실행 시 자동 생성(수동 작성 안 함)
+```
+src/
+  data/content.json                 (복사 + 이미지 경로 슬래시 보정)
+  types/content.ts                  (content.json 형태의 TS 인터페이스)
+  libs/
+    utils.ts                        (기존 cn(), 그대로)
+    format.ts                       (formatWon, formatPhoneNumber — regexr.js/script.js 포팅. esc()는 JSX가 기본 이스케이프하므로 포팅 불필요, competency[].desc의 <b> 렌더링만 dangerouslySetInnerHTML로 예외 처리)
+    api.ts                          (dataFetch — dataFetch.js 포팅, CMS_API_BASE_URL 대신 process.env.NEXT_PUBLIC_CMS_API_BASE_URL)
+  hooks/
+    useScrollReveal.ts              (initGridReveal 포팅 — IntersectionObserver, threshold 0.2, 1회성 unobserve)
+    useReceiptReveal.ts             (initReceiptReveal 포팅 — #selfbarGrid 상단 좌표 기준 scroll 리스너)
+    useProfitCountReveal.ts         (initProfitCountReveal + animateSalesCount 포팅 — rAF 카운트업, 40% 가시성 기준)
+    useInView.ts                    (초 store swiper 자동재생 게이팅용 범용 IntersectionObserver 훅, threshold 0.3)
+    useInquirySubmit.ts             (submitInquiry 포팅 — status: idle/sending/success/error, dataFetch 호출 + 버튼 문구 전환 타이밍. resetInquiryForm의 DOM 리셋 방식 대신, 폼 컴포넌트가 자신의 controlled state를 초기값으로 되돌리는 React 방식으로 대체)
+  components/
+    layout/
+      SiteHeader.tsx                (nav + 모바일 토글 + scrollSpy — initSmoothScroll/initMobileNav/initScrollSpy 포팅, 'use client')
+      SiteFooter.tsx                (정적, Server Component)
+    sections/
+      Hero.tsx                      (정적 + data-open-inquiry 트리거, 'use client' 불필요하나 버튼 클릭 이벤트 위해 클라이언트 컴포넌트)
+      Competitiveness.tsx           (comp-grid + trust-strip, props: competency/trust, useScrollReveal 사용, 'use client')
+      Menu.tsx                      (meat-grid + selfbar-grid, props: meat/selfbar, useScrollReveal, 'use client')
+      Reviews.tsx                   (정적 마크업 3장 그대로, useScrollReveal만 적용, 'use client')
+      Profit.tsx                    (receipt-track, props: profit, useReceiptReveal + useProfitCountReveal, 'use client')
+      Promise.tsx                   (완전 정적 배너, Server Component)
+      Cost.tsx                      (cost-table, props: cost, Server Component 가능 — 인터랙션 없음)
+      Location.tsx                  (좌측 캡션+우측 Swiper 캐러셀 + 05 하단 인라인 문의폼, props: stores/contact, 'use client')
+    inquiry/
+      SelectField.tsx               (.select-field 커스텀 드롭다운 — initCustomSelects 포팅, controlled: value/onChange/options/label/placeholder, 'use client')
+      PhoneInput.tsx                (formatPhoneNumber 적용 tel input, 3개 폼 공용, 'use client')
+      InquirySheetForm.tsx / InlineInquiryForm.tsx / StickyInquiryForm.tsx
+                                     (3개 폼 각각 — 이름/연락처/SelectField/지역/동의 체크박스 + useInquirySubmit. 마크업은 원본 클래스 그대로, 필드 상태는 controlled useState)
+      InquirySheet.tsx              (#inquirySheetBackdrop 모달 셸 — 열기/닫기, ESC,포커스 복귀, [data-open-inquiry] 전역 트리거 구독. Context나 전역 store 없이 커스텀 이벤트(`window` CustomEvent) 또는 간단한 Zustand 없는 상태 공유가 필요 — 아래 "열기 트리거 공유" 참고)
+      InquiryFab.tsx                (우측 세로 퀵탭 버튼, data-open-inquiry 트리거)
+      StickyInquiryBar.tsx          (데스크톱 전용 하단 바, 자체 폼 포함)
+    popup/
+      CmsPopupModal.tsx             (initPopup 포팅 — mount 시 fetchPopups, localStorage 오늘하루보기, Swiper effect-fade, centerPopupNav 재계산 로직 포함)
+  app/
+    layout.tsx                      (SiteHeader → {children} → InquiryFab → InquirySheet → CmsPopupModal → StickyInquiryBar → SiteFooter 순서로 재구성. 기존 globals.css는 유지하되 그 뒤에 legacy CSS 4종을 순서대로 import)
+    page.tsx                        (src/data/content.json import → 각 섹션에 슬라이스 전달, 플레이스홀더 내용 전체 교체)
+```
 
-`.gitignore`는 기존 것이 이미 Node/Next.js 표준 패턴(`node_modules/`, `.next`, `out`, `*.tsbuildinfo` 등)을 포함하고 있어 별도 수정 불필요 — 실행 후 실제로 무시되는지만 확인한다.
+### 열기 트리거 공유 (data-open-inquiry 대체)
 
-## 실행 순서
+원본은 `document.querySelectorAll('[data-open-inquiry]')`로 헤더/히어로/창업비용/05 CTA/FAB 버튼을 한 곳(`initInquirySheet`)에서 일괄 구독한다. React에서는 여러 컴포넌트 트리 위치에 흩어진 버튼들이 `InquirySheet`(layout.tsx에 있음)의 열림 상태를 건드려야 하므로, **간단한 커스텀 훅 `useInquirySheetTrigger()`**를 만든다 — 내부적으로 `window` 객체에 `CustomEvent('open-inquiry-sheet')`를 dispatch/listen 하는 방식(전역 상태 라이브러리 도입 없이 최소 구현). `InquirySheet.tsx`가 리스너를 등록하고, 나머지 트리거 버튼들은 `dispatchEvent`만 호출.
 
-1. `node -v`로 Node 버전 확인(레퍼런스 `engines.node >=22.0.0` 충족 여부), `yarn -v`로 yarn 사용 가능 여부 확인. yarn이 없으면 `corepack enable` 시도.
-2. 위 설정 파일들을 직접 작성(대화형 `create-next-app` 대신 수동 스캐폴딩 — 버전을 정확히 고정하기 위함).
-3. `yarn install` 실행, `yarn.lock` 생성 확인.
-4. `yarn dev`로 개발 서버 기동 확인(기본 포트 3000 — 기존 `python3 -m http.server 8765`, CMS 프로젝트 3001과 충돌 없음).
-5. `yarn build`로 프로덕션 빌드가 TypeScript/ESLint 에러 없이 통과하는지 확인.
-6. `yarn lint` 실행해 방금 작성한 `.eslintrc.json`이 실제로 동작하는지 확인.
-7. 기존 정적 사이트가 그대로 살아있는지 재확인 — `python3 -m http.server 8765`로 `index.html`이 여전히 정상 렌더되는지 스크린샷으로 확인(회귀 없음 검증).
-8. 새 Next.js 플레이스홀더 페이지도 헤드리스 스크린샷으로 한 번 확인.
+## CSS/폰트 연결
+
+`src/app/layout.tsx`에서 import 순서(기존 `globals.css`가 shadcn 플레이스홀더 토큰을 갖고 있으므로, 실제 디자인이 이를 덮어쓰도록 **legacy CSS를 뒤에** import):
+
+```
+import "./globals.css";
+import "@/styles/legacy/init.css";
+import "@/styles/legacy/fonts.css";
+import "@/styles/legacy/animations.css";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/css/effect-fade";
+import "@/styles/legacy/style.css";
+```
+
+## 환경변수
+
+`.env.example`에 `NEXT_PUBLIC_CMS_API_BASE_URL=http://localhost:3001/api/v1` 추가(문서화), `.env.local`에 동일 값 설정(gitignore 대상, 로컬 전용). `src/libs/api.ts`는 `process.env.NEXT_PUBLIC_CMS_API_BASE_URL`을 읽어 base URL로 사용.
+
+## 구현 순서
+
+1. 에셋 복사(`public/assets/imgs`, `public/assets/fonts`) + `data/content.json` → `src/data/content.json`(경로 보정) + CSS 4종 복사·경로 치환 → `src/styles/legacy/`
+2. `yarn add swiper`
+3. 공용 유틸/훅 작성: `types/content.ts`, `libs/format.ts`, `libs/api.ts`, `hooks/*`
+4. 공용 폼 부품: `SelectField.tsx`, `PhoneInput.tsx`
+5. 레이아웃 셸: `SiteHeader.tsx`, `SiteFooter.tsx`
+6. 섹션 컴포넌트: `Hero` → `Competitiveness` → `Menu` → `Reviews` → `Profit` → `Promise` → `Cost` → `Location`(Swiper 포함, 가장 복잡하므로 마지막)
+7. 오버레이: `InquirySheet`(+ 3개 폼 컴포넌트) → `InquiryFab` → `StickyInquiryBar` → `CmsPopupModal`
+8. `layout.tsx`/`page.tsx` 조립
+9. `.env.example`/`.env.local` 추가
+10. `yarn build` / `yarn lint` 통과 확인
+11. 헤드리스 스크린샷으로 기존 정적 사이트(`localhost:8765`)와 새 Next.js(`localhost:3000`) 섹션별(히어로/01/02/03 스크롤 리빌 후/05) 시각 비교, 모바일 폭(390px)에서 nav 토글/FAB 노출·데스크톱 폭에서 sticky bar 노출 확인
+12. go.daepae.cms.api를 `yarn dev`(3001)로 띄운 상태에서 문의폼 실제 제출 테스트(버튼 문구 전환 확인)
 
 ## 검증
 
-- `yarn install` / `yarn build` / `yarn lint` 모두 에러 없이 종료
-- `http://localhost:3000` 접속 시 플레이스홀더 페이지가 Tailwind 스타일이 적용된 채로 렌더됨(헤드리스 스크린샷으로 확인)
-- 기존 `http://localhost:8765/index.html`(정적 사이트)이 이전과 동일하게 동작함(회귀 없음)
-- `git status`에서 `index.html`/`assets/`/`data/`가 "수정됨"으로 표시되지 않고, 신규 Next.js 관련 파일만 추가된 것으로 표시됨
+- `yarn build`/`yarn lint` 에러 없이 통과
+- 기존 정적 사이트(`index.html`/`assets/`/`data/`)가 `git status`상 전혀 변경되지 않음
+- 헤드리스 스크린샷으로 주요 섹션 시각적 동일성 확인(색상 토큰, 폰트, 레이아웃)
+- 스크롤 인터랙션 동작 확인: 영수증 카드 펼침/카운트업, 그리드 리빌, 매장 캐러셀 자동재생(뷰포트 진입 시에만) 및 캡션 동기화
+- 커스텀 셀렉트 3곳 키보드 탐색(방향키/Enter/Esc) 동작
+- CMS API(3001) 기동 상태에서 문의폼 제출 시 실제 POST 요청과 성공/실패 문구 전환 확인

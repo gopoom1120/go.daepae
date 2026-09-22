@@ -31,7 +31,11 @@ metadata:
     자세한 내용은 [[gopumgyeok-cms-integration]] 참고.
 
 **계약 범위 / 다음 단계** (디자인 맞춤제작 + 반응형 + 5섹션 + 자체 DB 수집 + 관리자모드 + 도메인 + 호스팅)
-- 확정 시안을 **Next.js + Supabase** 구조로 마이그레이션: 정적 HTML → React 컴포넌트 분해, `data/content.json` → Supabase 테이블/CMS (JSON 구조가 그대로 시드 데이터가 된다), 문의폼 → 실제 insert 연동(RLS: anon insert 허용, admin만 select/update, `@supabase/ssr` 기반).
+- ~~확정 시안을 Next.js 구조로 마이그레이션~~ — **2026-09-22 시작됨.** 환경 세팅 + 콘텐츠(정적
+  HTML → React 컴포넌트) 이식까지 완료. 기존 정적 사이트는 삭제하지 않고 그대로 공존 중. 자세한
+  내용과 남은 작업(정적 사이트 은퇴 시점, 배포 방식 전환, 프로덕션 API URL 교체)은
+  [[gopumgyeok-nextjs-migration]] 참고. Supabase 자체는 이미 `go.daepae.cms.api`(백오피스) 쪽에
+  구축되어 있고, 랜딩은 그 API를 통해 간접적으로만 연동한다(랜딩이 Supabase에 직접 연결하지 않음).
 - 관리자모드: 로그인 + 문의내역 조회/CSV 다운로드 + 콘텐츠 CMS.
 - 도메인 연결 및 호스팅 배포.
 

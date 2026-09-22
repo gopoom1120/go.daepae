@@ -1,0 +1,2804 @@
+:root {
+  --bg: #0e0c0a;
+  --bg-card: #ffffff;
+  --bg-card-2: #211b14;
+  --gold: #c9a227;
+  --gold-light: #e8cd7a;
+  --text: #333333;
+  --text-invert: #f3eee2; /* 어두운 배경(히어로/메뉴/수익분석/창업비용)용 밝은 본문색 */
+  --text-dim: #b3a995;
+  --muted: #7a7264;
+  --line: #332c22;
+  --red: #a6291f;
+}
+/* 리셋은 assets/css/init.css, 폰트 로드는 assets/css/fonts.css, 키프레임은
+   assets/css/animations.css 로 분리되어 있다. 이 파일에는 토큰 + 컴포넌트만 둔다. */
+.wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* NAV */
+header.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 48px;
+  /* opacity 를 헤더 자체에 걸면 로고·메뉴·버튼까지 같이 흐려지므로,
+     그라디언트 대신 배경에만 알파를 준 단색 검정을 쓴다. */
+  background: rgba(0, 0, 0, 0.6);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s ease;
+}
+header.nav.scrolled {
+  border-bottom-color: var(--line);
+}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--gold-light);
+  font-size: 20px;
+}
+.nav-logo img {
+  height: 44px;
+  width: auto;
+  border-radius: 4px;
+}
+.nav-links {
+  display: flex;
+  gap: 44px;
+  font-size: 18px;
+  color: var(--text-invert);
+}
+.nav-links a {
+  position: relative;
+  padding: 4px 0;
+  font-weight: 700;
+}
+.nav-links a:hover {
+  color: var(--gold-light);
+}
+.nav-links a.active {
+  color: var(--gold-light);
+}
+.nav-links a.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 2px;
+  background: var(--gold);
+}
+.nav-cta {
+  border: 1px solid var(--gold);
+  color: var(--gold-light);
+  padding: 13px 28px;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  border-radius: 2px;
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
+}
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  width: 32px;
+  height: 38px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.nav-toggle span {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: var(--gold-light);
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
+}
+header.nav.nav-open .nav-toggle span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+header.nav.nav-open .nav-toggle span:nth-child(2) {
+  opacity: 0;
+}
+header.nav.nav-open .nav-toggle span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+@media (max-width: 1024px) {
+  header.nav {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: min(280px, 72vw);
+    background: var(--bg-card);
+    flex-direction: column;
+    justify-content: center;
+    gap: 28px;
+    padding: 40px;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    border-left: 1px solid var(--line);
+    font-size: 18px;
+    color: var(--text); /* 흰 배경 플라이아웃이라 어두운 배경용 --text-dim 대신 기본 글자색 사용 */
+  }
+  header.nav.nav-open .nav-links {
+    transform: translateX(0);
+  }
+  .nav-cta {
+    display: none;
+  }
+  .nav-toggle {
+    display: flex;
+  }
+}
+
+/* HERO */
+/* 히어로 전체를 화면에 고정(sticky)해서, 배경뿐 아니라 문구·버튼도 제자리에 머물고
+   다음 섹션이 그 위로 덮으며 올라오게 한다.
+   ⚠ sticky 는 위치 지정 요소라 뒤따르는 '정적' 형제(.wave, footer)보다 위에 그려진다.
+      그 둘에 position:relative + z-index 를 준 이유가 이것이다. */
+.hero {
+  position: sticky;
+  top: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  /* 위/아래 패딩 차이만큼 콘텐츠가 정중앙에서 밀린다. 아래를 두껍게 줘서 위로 올렸다
+     (상단 170px 은 고정 헤더 높이가 커진 만큼 늘린 값이라 줄이지 않았다). */
+  padding: 170px 24px 120px;
+  /* --text 가 전역적으로 어두운 글자색(#333)으로 바뀌었지만 히어로는 여전히 어두운
+     사진 배경이라, 이 안에서만 밝은 값으로 되돌린다(hero-sub2/hero-badge-phone/btn-ghost 가 씀). */
+  --text: var(--text-invert);
+}
+/* 패럴랙스 — 배경만 뷰포트에 고정되어 히어로가 스크롤로 걷히듯 지나간다.
+   background-attachment:fixed 를 쓰려면 <img> 가 아니라 CSS 배경이어야 한다. */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url("/assets/imgs/meat_platter.jpg");
+  background-repeat: no-repeat;
+  background-position: 50% 32%;
+  background-size: cover;
+  background-attachment: fixed;
+}
+/* iOS Safari 는 background-attachment:fixed 를 무시하고 배경이 깨져 보인다.
+   터치 기기와 좁은 화면에서는 일반 스크롤 배경으로 되돌린다. */
+@media (max-width: 1024px), (hover: none) {
+  .hero-bg {
+    background-attachment: scroll;
+  }
+}
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 8, 6, 0.72) 0%,
+    rgba(10, 8, 6, 0.5) 32%,
+    rgba(10, 8, 6, 0.82) 78%,
+    rgba(10, 8, 6, 0.97) 100%
+  );
+}
+
+/* 히어로 중앙 스택 맨 아래(CTA 버튼 다음)에 놓인다.
+   inline-flex + 부모의 text-align:center 로 가운데 정렬된다. */
+.hero-badge-phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(232, 205, 122, 0.45);
+  border-radius: 999px;
+  padding: 11px 24px;
+  background: rgba(14, 12, 10, 0.55);
+  backdrop-filter: blur(4px);
+  color: var(--text);
+  font-size: clamp(18px, 1.05vw, 19px);
+  font-weight: 500;
+}
+.hero-badge-phone b {
+  color: var(--gold-light);
+  font-weight: 700;
+}
+.hero-badge-phone .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold);
+  flex-shrink: 0;
+}
+@media (max-width: 1024px) {
+  .hero-badge-phone {
+    padding: 9px 18px;
+  }
+}
+
+.hero-center {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.hero-eyebrow2 {
+  color: var(--text-dim);
+  font-size: clamp(18px, 1.25vw, 20px);
+  margin-bottom: 24px;
+  letter-spacing: 0.01em;
+}
+.hero-wordmark {
+  font-weight: 900;
+  font-size: clamp(72px, 15vw, 132px);
+  line-height: 1;
+  display: inline-block;
+  background: linear-gradient(
+    115deg,
+    #8e6e1e 0%,
+    var(--gold) 20%,
+    var(--gold-light) 38%,
+    #fff6da 48%,
+    var(--gold-light) 58%,
+    var(--gold) 76%,
+    #8e6e1e 100%
+  );
+  background-size: 260% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  /* 아래 붉은 웨이브 언더라인(.hero-underline)을 삭제하면서, 그 요소가 갖고 있던
+     아래 여백 28px 을 워드마크로 옮겼다(원래 값 2px). */
+  letter-spacing: -0.02em;
+  margin-bottom: 28px;
+  /* 화면을 꽉 채울 만큼 크게 나타났다가 빠르게 제자리 크기로 줄어들고, 이어서
+     그라디언트가 계속 흐르며 반짝인다. 이 팝 인트로는 3s 마다 무한 반복된다(2026-09-03).
+     wordmarkIntro 키프레임은 재사용을 위해 animations.css 로 분리했다(index.html 에서
+     style.css 보다 먼저 로드). */
+  animation:
+    wordmarkIntro 3s cubic-bezier(0.16, 1, 0.3, 1) infinite,
+    wordmarkShine 5s linear infinite;
+}
+.hero-sub2 {
+  color: var(--text);
+  font-size: clamp(18px, 1.55vw, 22px);
+  line-height: 1.6;
+  margin-bottom: 38px;
+}
+.hero-sub2 b {
+  color: var(--gold-light);
+  font-weight: 800;
+}
+.hero-cta-group {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 36px;
+}
+.btn-primary {
+  background: var(--gold);
+  color: #1b1608;
+  font-weight: 700;
+  padding: 20px 42px;
+  font-size: clamp(18px, 1.15vw, 19px);
+  letter-spacing: 0.02em;
+  border-radius: 2px;
+  display: inline-block;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+.btn-ghost {
+  border: 1px solid rgba(243, 238, 226, 0.35);
+  color: var(--text);
+  padding: 20px 42px;
+  font-size: clamp(18px, 1.15vw, 19px);
+  border-radius: 2px;
+  display: inline-block;
+}
+.btn-primary:focus,
+.btn-ghost:focus {
+  outline: none;
+}
+
+@media (max-width: 1024px) {
+  .hero {
+    padding: 130px 24px 90px;
+  }
+  /* 모바일에서는 두 버튼이 세로로 쌓인다. .hero-cta-group 자체를 고정 폭(215px)으로 두고
+     버튼 각각에 width:100% 를 줘서 그 215px 를 그대로 채운다. .hero-cta-group 의 실제
+     부모는 .hero 가 아니라 .hero-center(display:flex 가 아닌 일반 block, text-align:center
+     만 있음)라서, text-align:center 는 고정폭 block 요소인 .hero-cta-group 자체를 가운데로
+     보내주지 못한다(그건 인라인 콘텐츠에만 적용된다) — margin:0 auto 로 직접 가운데
+     정렬한다. text-align:center 는 늘어난 버튼 박스 안에서 글자가 가운데 유지되도록 한다. */
+  .hero-cta-group {
+    margin: 0 auto 48px;
+    flex-direction: column;
+    align-items: center;
+    width: 215px;
+  }
+  .btn-primary,
+  .btn-ghost {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* WAVE */
+.wave {
+  line-height: 0;
+  position: relative;
+  z-index: 1;
+} /* sticky 히어로 위로 올라오게 */
+/* 웨이브 SVG 는 아래쪽 절반만 칠해져 있어 윗부분이 투명하다. 히어로가 sticky 로 뒤에
+   깔려 있으므로 그 틈으로 히어로가 비친다 — 바로 위 섹션 색을 배경으로 깔아 막는다. */
+.wave--from-profit {
+  background: #1b0e0c;
+} /* 위: 03 수익분석 그라디언트 끝색 */
+.wave svg {
+  width: 100%;
+  height: 64px;
+  display: block;
+}
+
+/* SECTION generic */
+section {
+  padding: 120px 0;
+  position: relative;
+  scroll-margin-top: 84px;
+}
+.section-head {
+  margin-bottom: 64px;
+  max-width: 640px;
+}
+.kicker {
+  color: var(--gold);
+  font-size: 18px;
+  letter-spacing: 0.14em;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+/* 섹션 상단 타이틀은 전부 RixYeoljeongdo 디스플레이 폰트를 쓴다(2026-09-02) — 폰트 자체가
+   굵은 서체라 font-weight 는 400 으로 둔다(800 을 주면 브라우저가 가짜로 두껍게 합성해 지저분해진다). */
+/* 폰트 크기는 01 경쟁력 포스터 타이틀(.comp-title)과 통일한다(2026-09-03) — "섹션마다 타이틀
+   크기가 다르다"는 피드백으로, 이 값과 .profit-head h2 를 .comp-title 과 같은 clamp 로 맞췄다. */
+.section-head h2 {
+  font-family: "RixYeoljeongdo", "Pretendard", sans-serif;
+  font-weight: 400;
+  font-size: clamp(34px, 5vw, 64px);
+  line-height: 1.35;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+/* 섹션 타이틀 안에서 강조하는 문구는 빨간색으로 포인트를 준다(2026-09-02) — .comp-title 의
+   .cline--accent 와 같은 의도, 색만 재사용하고 외곽선/그림자 처리는 이 타이틀들에는 넣지 않는다. */
+.section-head h2 .h2-accent {
+  color: var(--red);
+}
+.section-head p {
+  color: var(--text-dim);
+  margin-top: 18px;
+  font-size: 18px;
+  max-width: 520px;
+}
+
+/* "즉시 토글" 임팩트 효과 — 6개 섹션 타이틀의 빨간 강조 문구(.h2-accent/.cline--accent/
+   .profit-head h2 em/.inquiry-left h3 em, index.html 에서 .accent-impact 를 함께 건다) 공용.
+   스크롤 위치와 무관하게 페이지에 있는 동안 계속 무한 반복한다(2026-09-03, 스크롤 트리거 방식
+   에서 변경 — JS/IntersectionObserver 없이 순수 CSS 애니메이션). @keyframes accentSnap 은
+   assets/css/animations.css 에 있다(이 프로젝트 규칙상 모든 @keyframes 는 그 파일에 모은다).
+   전환 구간을 0.01% 로 razor-thin 하게 둬서 이징이 걸려 있어도 보간 시간이 사실상 없어
+   "턱" 하고 끊어지는 인상을 준다. */
+.accent-impact {
+  display: inline-block;
+  animation: accentSnap 1.5s infinite;
+}
+
+/* COMPETENCY */
+/* 흰 배경은 임팩트가 약하다는 피드백으로 2026-09-02에 어두운 배경으로 되돌렸다.
+   --text-dim 은 :root 기본값(#B3A995, 밝은 베이지)이 어두운 배경에 맞으므로 별도 재선언이
+   필요 없다 — --text 만 --text-invert 로 뒤집는다. 배경은 은은한 골드 글로우 + 상차림 사진
+   워터마크로 깊이를 준다. RixYeoljeongdo @font-face 는 assets/css/fonts.css 로 옮겼다. */
+.comp-stars {
+  color: var(--gold);
+  font-size: 22px;
+  letter-spacing: 0.4em;
+  margin-bottom: 10px;
+}
+/* 포스터 임팩트 타이틀 — 헤드라인 전용 디스플레이 폰트 + 굵은 외곽선 + 계단식 그림자로
+   입체감(pop-art extrusion)을 낸다. font-size 는 2026-09-03부터 다른 섹션 타이틀(.section-head
+   h2, .profit-head h2)과 같은 clamp(34px,5vw,64px) — 이 규칙엔 그대로 남겨 명시적으로 고정해
+   두되(중복이어도 무방), line-height/letter-spacing/외곽선-그림자는 이 섹션만의 것이다. */
+.section-head h2.comp-title {
+  font-family: "RixYeoljeongdo", "Pretendard", sans-serif;
+  font-weight: 400;
+  font-size: clamp(34px, 5vw, 64px);
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+.comp-title .cline {
+  display: inline-block;
+  -webkit-text-stroke: 2px #140f0a;
+  text-shadow:
+    1px 1px 0 #140f0a,
+    2px 2px 0 #140f0a,
+    3px 3px 0 #140f0a,
+    4px 4px 0 #140f0a,
+    5px 5px 0 #140f0a;
+}
+.comp-title .cline--light {
+  color: var(--text-invert);
+}
+.comp-title .cline--accent {
+  color: var(--red);
+}
+.competency {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 900px 480px at 15% -10%, rgba(232, 205, 122, 0.12), transparent 62%),
+    var(--bg);
+  --text: var(--text-invert);
+}
+.competency::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  top: -40px;
+  right: -60px;
+  width: 760px;
+  height: 760px;
+  background-image: url("/assets/imgs/generated.png");
+  background-repeat: no-repeat;
+  background-position: top right;
+  background-size: contain;
+  opacity: 0.55;
+  -webkit-mask-image: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 40%, transparent 85%);
+  mask-image: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 40%, transparent 85%);
+}
+.competency .wrap {
+  position: relative;
+  z-index: 1;
+}
+/* 참고 시안(치킨신드롬 혜택 카드)처럼 어두운 "티켓" 카드 안에 아이콘 타일 3개를 담는다.
+   좌우 반원 노치는 섹션 배경의 기본 톤(--bg)과 같은 색을 칠해 punch-hole 처럼 보이게 한다 —
+   섹션 배경색이 바뀌면 이 값도 함께 바꿔야 한다. */
+.comp-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  background: rgba(232, 205, 122, 0.14);
+  border-radius: 28px;
+  border: 1px solid rgba(232, 205, 122, 0.3);
+  box-shadow: 0 30px 70px -24px rgba(0, 0, 0, 0.35);
+  margin-top: 8px;
+  isolation: isolate;
+}
+.comp-grid::before,
+.comp-grid::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 26px;
+  height: 26px;
+  z-index: 3;
+  background: var(--bg);
+  border-radius: 50%;
+  transform: translateY(-50%);
+  box-shadow: inset 0 0 0 1px rgba(232, 205, 122, 0.3);
+}
+.comp-grid::before {
+  left: -13px;
+}
+.comp-grid::after {
+  right: -13px;
+}
+.comp-card {
+  position: relative;
+  overflow: hidden;
+  padding: 104px 30px 40px;
+  text-align: center;
+  --text: var(--text-invert);
+  --text-dim: #b3a995; /* 어두운 타일이라 흰 배경용 색을 다시 뒤집는다 */
+  opacity: 0; /* initGridReveal 이 in-view 를 붙이기 전까지 숨겨둔다 */
+  transition:
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.45s ease;
+}
+.comp-card:nth-child(odd) {
+  background: #1c160e;
+}
+.comp-card:nth-child(even) {
+  background: var(--bg-card-2);
+}
+.comp-card:first-child {
+  border-radius: 26px 0 0 26px;
+}
+.comp-card:last-child {
+  border-radius: 0 26px 26px 0;
+}
+/* 카드 상단에 얇게 깔아두고 호버 시 왼쪽에서 오른쪽으로 채워지는 골드 바 */
+.comp-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 1;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* 타일 아이콘 — 카드마다 다른 SVG 를 top 중앙에 배치 */
+.comp-card::after {
+  content: "";
+  position: absolute;
+  top: 38px;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  transform: translateX(-50%);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.comp-card:nth-child(1)::after {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27%23FFFFFF%27%20stroke-width%3D%271.6%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M12%203l7%203.2v5.3c0%205-3.2%208.3-7%209.5-3.8-1.2-7-4.5-7-9.5V6.2L12%203z%27%2F%3E%3Cpath%20d%3D%27M9%2012.2l2.1%202.1L15.5%2010%27%2F%3E%3C%2Fsvg%3E");
+}
+.comp-card:nth-child(2)::after {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27%23FFFFFF%27%20stroke-width%3D%271.6%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M3.5%2012h17%27%2F%3E%3Cpath%20d%3D%27M4.5%2012a7.5%207.5%200%200015%200%27%2F%3E%3Cpath%20d%3D%27M12%203.2c-1.6%201.5-1.6%203.1%200%204.6%201.6-1.5%201.6-3.1%200-4.6z%27%2F%3E%3C%2Fsvg%3E");
+}
+.comp-card:nth-child(3)::after {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27%23FFFFFF%27%20stroke-width%3D%271.6%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M2.5%207.5c1.8-1.8%203.6-1.8%205.4%200s3.6%201.8%205.4%200%203.6-1.8%205.4%200%27%2F%3E%3Cpath%20d%3D%27M2.5%2013c1.8-1.8%203.6-1.8%205.4%200s3.6%201.8%205.4%200%203.6-1.8%205.4%200%27%2F%3E%3Cpath%20d%3D%27M2.5%2018.5c1.8-1.8%203.6-1.8%205.4%200s3.6%201.8%205.4%200%203.6-1.8%205.4%200%27%2F%3E%3C%2Fsvg%3E");
+}
+.comp-card.in-view {
+  animation: compCardReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.comp-card.in-view:nth-child(2) {
+  animation-delay: 0.12s;
+}
+.comp-card.in-view:nth-child(3) {
+  animation-delay: 0.24s;
+}
+.comp-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 28px 44px -16px rgba(0, 0, 0, 0.4);
+}
+.comp-card:hover::before {
+  transform: scaleX(1);
+}
+.comp-card:hover::after {
+  transform: translateX(-50%) scale(1.12);
+}
+.comp-num {
+  display: inline-block;
+  color: var(--gold-light);
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 14px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition:
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    color 0.3s ease;
+}
+.comp-card:hover .comp-num {
+  transform: scale(1.1);
+  color: var(--gold);
+}
+.comp-card h3 {
+  font-size: 19px;
+  margin-bottom: 14px;
+  color: var(--text);
+  letter-spacing: 0.01em;
+  font-weight: 800;
+}
+.comp-card p {
+  color: var(--text-dim);
+  font-size: 18px;
+  line-height: 1.75;
+}
+/* 핵심 키워드(<b>) 는 골드로 강조하면서 계속 깜빡여 시선을 붙잡는다 */
+.comp-card b {
+  display: inline-block;
+  color: var(--gold-light);
+  font-weight: 700;
+  animation: keywordBlink 1.6s ease-in-out infinite;
+}
+@media (max-width: 1024px) {
+  .comp-grid {
+    grid-template-columns: 1fr;
+  }
+  .comp-card:first-child {
+    border-radius: 26px 26px 0 0;
+  }
+  .comp-card:last-child {
+    border-radius: 0 0 26px 26px;
+  }
+  .comp-grid::before,
+  .comp-grid::after {
+    display: none;
+  } /* 세로로 쌓이면 좌우 노치는 어색해 숨긴다 */
+}
+
+.trust-strip {
+  margin-top: 64px;
+  padding-top: 48px;
+  border-top: 1px solid rgba(232, 205, 122, 0.18);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+}
+/* 카드형 "뱃지" — 어두워진 섹션 배경 위에서 강한 대비를 내도록 흰 카드로 뒤집는다.
+   우측 상단 접힌 리본 모서리 + 좌측 상단 번호 배지 + 중앙 아이콘(진한 색, 골드는 리본/배지 전용). */
+.trust-item {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--bg-card);
+  border-radius: 18px;
+  padding: 56px 20px 26px;
+  text-align: center;
+  --text: #231b12;
+  --text-dim: #6b6b6b;
+  box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  transition:
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.trust-item.in-view {
+  animation: compCardReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.trust-item.in-view:nth-child(2) {
+  animation-delay: 0.08s;
+}
+.trust-item.in-view:nth-child(3) {
+  animation-delay: 0.16s;
+}
+.trust-item.in-view:nth-child(4) {
+  animation-delay: 0.24s;
+}
+.trust-item:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 22px 34px -18px rgba(0, 0, 0, 0.4);
+}
+/* 우측 상단 접힌 리본 모서리 (border-triangle 트릭) */
+.trust-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  border-style: solid;
+  border-width: 0 32px 32px 0;
+  border-color: transparent var(--gold) transparent transparent;
+  transition: border-color 0.3s ease;
+}
+.trust-item:hover::before {
+  border-color: transparent var(--gold-light) transparent transparent;
+}
+/* 중앙 아이콘 — 항목마다 다른 SVG */
+.trust-item::after {
+  content: "";
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  width: 30px;
+  height: 30px;
+  transform: translateX(-50%);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.trust-item:nth-child(1)::after {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%232A2118%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%229%22%20r%3D%225.3%22%2F%3E%3Cpath%20d%3D%22M9.3%209.2l1.8%201.8%203.4-3.6%22%2F%3E%3Cpath%20d%3D%22M9.3%2013.6l-1.6%206%204.3-2%204.3%202-1.6-6%22%2F%3E%3C%2Fsvg%3E");
+}
+.trust-item:nth-child(2)::after {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%232A2118%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M4%2010l1-5.2h14L20%2010%22%2F%3E%3Cpath%20d%3D%22M4%2010.2a2.1%202.1%200%20004.1%200%202.1%202.1%200%20004.1%200%202.1%202.1%200%20004%200%202.1%202.1%200%20004%200%22%2F%3E%3Cpath%20d%3D%22M5%2010.6V20h14v-9.4%22%2F%3E%3Cpath%20d%3D%22M10%2020v-5.2h4V20%22%2F%3E%3C%2Fsvg%3E");
+}
+.trust-item:nth-child(3)::after {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%232A2118%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M3.5%2012h17%22%2F%3E%3Cpath%20d%3D%22M4.5%2012a7.5%207.5%200%200015%200%22%2F%3E%3Cpath%20d%3D%22M8.5%2012c-.3-2.6%201-4.6%203-5.6%22%2F%3E%3Cpath%20d%3D%22M12.5%2012c-.2-3%201.4-5.2%203.4-6.2%22%2F%3E%3C%2Fsvg%3E");
+}
+.trust-item:nth-child(4)::after {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%232A2118%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M5.2%2019c8.6%200%2013.6-5.2%2013.6-13.6-8.6%200-13.6%205.2-13.6%2013.6z%22%2F%3E%3Cpath%20d%3D%22M6.4%2017.8c2.8-3%204.6-6.2%205.6-9.8%22%2F%3E%3C%2Fsvg%3E");
+}
+.trust-item:hover::after {
+  transform: translateX(-50%) scale(1.12);
+}
+.trust-num {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  color: #1c160e;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+.trust-item h5 {
+  color: var(--text);
+  font-weight: 800;
+  font-size: 19px;
+  margin: 14px 0 8px;
+  transition:
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    color 0.3s ease;
+}
+.trust-item:hover h5 {
+  transform: scale(1.06);
+  color: #8a6a1f;
+}
+.trust-item p {
+  color: var(--text-dim);
+  font-size: 18px;
+  line-height: 1.6;
+}
+@media (max-width: 1024px) {
+  .trust-strip {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 22px;
+  }
+}
+
+/* MENU */
+.menu {
+  background: var(--bg);
+  --text: var(--text-invert);
+} /* 어두운 배경 — section-head h2, meat-label 이 밝은 글자를 쓰도록 */
+.meat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px 24px;
+  margin-top: 16px;
+}
+.meat-card {
+  text-align: center;
+  opacity: 0;
+} /* initGridReveal 이 in-view 를 붙이기 전까지 숨겨둔다 */
+.meat-card__circle {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--bg-card);
+  border: 4px solid #140f0a;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+.meat-card__circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(1.05);
+  transition: transform 0.5s ease;
+}
+.meat-card:hover .meat-card__circle img {
+  transform: scale(1.15);
+}
+.meat-card__label {
+  margin-top: 16px;
+  font-size: 18px;
+  color: var(--text);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.meat-card.in-view {
+  animation: compCardReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.meat-card.in-view:nth-child(1) {
+  animation-delay: 0s;
+}
+.meat-card.in-view:nth-child(2) {
+  animation-delay: 0.08s;
+}
+.meat-card.in-view:nth-child(3) {
+  animation-delay: 0.16s;
+}
+.meat-card.in-view:nth-child(4) {
+  animation-delay: 0.24s;
+}
+.meat-card.in-view:nth-child(5) {
+  animation-delay: 0.32s;
+}
+.meat-card.in-view:nth-child(6) {
+  animation-delay: 0.4s;
+}
+.meat-card.in-view:nth-child(7) {
+  animation-delay: 0.48s;
+}
+.meat-card.in-view:nth-child(8) {
+  animation-delay: 0.56s;
+}
+.meat-card.in-view:nth-child(9) {
+  animation-delay: 0.64s;
+}
+@media (max-width: 1024px) {
+  .meat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.selfbar-note {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin: 56px 0 20px;
+  color: var(--text-dim);
+  font-size: 18px;
+  flex-wrap: wrap;
+}
+.selfbar-note b {
+  color: var(--gold-light);
+  font-size: 18px;
+}
+.selfbar-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 14px;
+}
+.sb-item {
+  text-align: center;
+  opacity: 0;
+} /* initGridReveal 이 in-view 를 붙이기 전까지 숨겨둔다 */
+.sb-item .circle {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+.sb-item .circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.sb-item:hover .circle {
+  border-color: var(--gold);
+  box-shadow: 0 10px 22px -8px rgba(0, 0, 0, 0.4);
+}
+.sb-item:hover .circle img {
+  transform: scale(1.15);
+}
+.sb-item span {
+  display: block;
+  margin-top: 8px;
+  font-size: 18px;
+  color: var(--muted);
+}
+.sb-item.in-view {
+  animation: compCardReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.sb-item.in-view:nth-child(1) {
+  animation-delay: 0s;
+}
+.sb-item.in-view:nth-child(2) {
+  animation-delay: 0.06s;
+}
+.sb-item.in-view:nth-child(3) {
+  animation-delay: 0.12s;
+}
+.sb-item.in-view:nth-child(4) {
+  animation-delay: 0.18s;
+}
+.sb-item.in-view:nth-child(5) {
+  animation-delay: 0.24s;
+}
+.sb-item.in-view:nth-child(6) {
+  animation-delay: 0.3s;
+}
+.sb-item.in-view:nth-child(7) {
+  animation-delay: 0.36s;
+}
+.sb-item.in-view:nth-child(8) {
+  animation-delay: 0.42s;
+}
+@media (max-width: 1024px) {
+  .selfbar-grid {
+    grid-template-columns: repeat(4, 1fr);
+    row-gap: 24px;
+  }
+}
+
+/* REVIEWS — 실제 네이버 리뷰 스크린샷(review1~3.png)을 아이폰 목업(iphone.png)에 끼워 넣은 소비자 찐후기.
+   iphone.png 는 화면 부분이 투명한 1538×3120 PNG — 2026-09-08 "고품격대패" 로고+태그라인+상태바
+   아이콘이 박힌 브랜드 헤더가 상단에 새로 그려진 버전으로 교체됐다(이전엔 일반 카메라 노치만
+   있었다). 이 헤더 밴드는 불투명이라 스크린샷과 겹치지 않고 그 아래부터 화면 구멍이 시작된다.
+   스크린샷을 뒤에 깔고 프레임을 위에 덮는 2단 레이어로 합성한다. iphone.png 를 바꿀 때마다
+   실제 픽셀(알파 채널)을 다시 분석해서 위치를 맞춰야 한다 — 임의로 조정하면 사진이 베젤 밖으로
+   삐져나오거나 브랜드 헤더 밑으로 밀려든다. 화면 구멍 실측값은 4.2%/8.5%, 92.3%×90.4%다 — 이전
+   프레임(카메라 노치만 있던 버전)에서는 "너무 꽉 찬 느낌"이라는 피드백으로 안쪽 여백을 줬었지만,
+   이 브랜드 헤더 버전에서는 반대로 "이미지가 폰 화면에 꽉 차야 한다"는 2026-09-08 피드백을 받아
+   실측치에 가깝게(안전 마진만 살짝 남기고) 채운다. */
+.reviews {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 900px 480px at 85% -10%, rgba(232, 205, 122, 0.12), transparent 62%),
+    var(--bg);
+  --text: var(--text-invert);
+}
+.review-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin-top: 16px;
+  align-items: start;
+}
+.review-item {
+  text-align: center;
+  opacity: 0;
+} /* initGridReveal 이 in-view 를 붙이기 전까지 숨겨둔다 */
+.review-item.in-view {
+  animation: compCardReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.review-item.in-view:nth-child(2) {
+  animation-delay: 0.12s;
+}
+.review-item.in-view:nth-child(3) {
+  animation-delay: 0.24s;
+}
+.review-item:nth-child(2) {
+  margin-top: -28px;
+} /* 가운데 폰을 살짝 띄워 03 수익분석 영수증 열과 같은 지그재그 리듬(.receipt-col.center) */
+
+/* 배지와 폰 사이 여백 — 겹치게(음수 margin) 했더니 배지가 카메라 노치를 가려 2026-09-08 다시 띄웠다. */
+.review-badge {
+  position: relative;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 20px;
+  background: var(--red);
+  color: #f7e9e4;
+  font-size: clamp(20px, 2.4vw, 28px);
+  font-weight: 800;
+  padding: 16px 30px;
+  border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.5);
+}
+.review-badge b {
+  font-weight: 800;
+}
+
+.review-phone {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+  aspect-ratio: 1538/3120;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.review-item:hover .review-phone {
+  transform: translateY(-8px);
+}
+.review-phone__screen {
+  position: absolute;
+  z-index: 2;
+  left: 4.2%;
+  top: 7.5%;
+  width: 92%;
+  height: 90%;
+  border-radius: 0 0 30px 30px;
+}
+.review-phone__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+@media (max-width: 1024px) {
+  .review-grid {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 56px;
+  }
+  .review-item:nth-child(2) {
+    margin-top: 0;
+  }
+  .review-item:nth-child(3) {
+    grid-column: 1 / span 2;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+  /* 2열 폭(~200px 안팎)에서 "왕십리 본점 리뷰 675+" 같은 긴 배지가 nowrap 이면 화면 밖으로 밀려난다 —
+     모바일에서만 줄바꿈을 허용하고 글자/패딩을 최소치로 줄인다. */
+  .review-badge {
+    font-size: 18px;
+    padding: 10px 16px;
+    white-space: normal;
+    line-height: 1.3;
+  }
+}
+
+/* PROFIT — 영수증 롤 스타일 */
+.profit {
+  position: relative;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(166, 41, 31, 0.35), transparent 55%),
+    radial-gradient(ellipse at 80% 100%, rgba(166, 41, 31, 0.25), transparent 55%),
+    linear-gradient(180deg, #24100d 0%, #1b0e0c 100%);
+  overflow: hidden;
+  --text: var(--text-invert); /* 어두운 배경 — profit-head h2, underline-mark 용 */
+}
+.profit::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  width: min(760px, 70vw);
+  height: min(760px, 70vw);
+  background-image: url("/assets/imgs/bg_map.png");
+  background-repeat: no-repeat;
+  background-position: top left;
+  background-size: contain;
+  opacity: 0.18;
+  pointer-events: none;
+}
+.profit-head {
+  text-align: center;
+  max-width: 100%;
+  margin-bottom: 72px;
+}
+.profit-head .kicker {
+  text-align: center;
+}
+.profit-head h2 {
+  font-family: "RixYeoljeongdo", "Pretendard", sans-serif;
+  font-weight: 400;
+  font-size: clamp(34px, 5vw, 64px);
+  line-height: 1.3;
+  color: var(--text);
+}
+.profit-head h2 em {
+  font-style: normal;
+  font-weight: 400;
+  color: var(--red);
+}
+.profit-sub {
+  margin-top: 20px;
+  font-size: 18px;
+  color: var(--text-dim);
+}
+.underline-mark {
+  position: relative;
+  color: var(--text);
+  font-weight: 600;
+}
+.underline-mark::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 6px;
+  background: repeating-linear-gradient(90deg, var(--red) 0 6px, transparent 6px 10px);
+  opacity: 0.8;
+}
+
+.receipt-track {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 28px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.receipt-col {
+  flex: 1 1 280px;
+  max-width: 330px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.receipt-col.center {
+  margin-top: -22px;
+}
+
+.printer-bar {
+  position: relative;
+  width: 100%;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    #f2f1ee 0%,
+    #d8d6d0 25%,
+    #8b8883 55%,
+    #b5b2ac 80%,
+    #77746e 100%
+  );
+  box-shadow:
+    0 10px 18px rgba(0, 0, 0, 0.5),
+    0 0 0 3px rgba(166, 41, 31, 0.3),
+    inset 0 2px 2px rgba(255, 255, 255, 0.75),
+    inset 0 -3px 4px rgba(0, 0, 0, 0.35);
+  z-index: 3;
+}
+.printer-slot {
+  position: absolute;
+  left: 9%;
+  right: 9%;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 11px;
+  border-radius: 3px;
+  background: #0a0a0a;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.9);
+}
+/* margin-top 은 바 높이(34px)의 절반보다 크게 잡아 종이 윗변이 슬롯 선에 물리게 한다. */
+.receipt-mask {
+  position: relative;
+  z-index: 3; /* 바와 같은 z-index + DOM 상 뒤 → 종이가 바 앞으로 나온다 */
+  /* 폭은 슬롯(.printer-slot: 바 기준 left/right 9%)과 정확히 같은 82%.
+     종이가 슬롯 구멍에서 그대로 빠져나오는 것처럼 보이게 하려면 두 값을 함께 움직일 것. */
+  width: 82%;
+  margin-top: -19px;
+  /* 높이는 항상 실제 콘텐츠 높이(auto)로 고정한다 — max-height 를 0↔실측값으로 움직이면
+     이 박스의 문서 흐름 높이 자체가 바뀌어 03 수익분석 섹션 전체 높이가 펼쳐짐/접힘마다
+     출렁인다(2026-09-03 수정). clip-path 로 "보이는 영역"만 위→아래로 드러내면 레이아웃
+     높이는 처음부터 고정되고, 슬롯에서 슬라이스되어 나오는 시각 효과는 그대로 유지된다. */
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 1s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0ms);
+}
+.receipt-col.in-view .receipt-mask {
+  clip-path: inset(0 0 0% 0);
+}
+
+/* 페이드 인/아웃은 제거했다(2026-09-01) — 종이는 항상 불투명하고, 슬롯에서 밀려 나오는
+   .receipt-mask 의 clip-path 만으로 움직인다. drop-shadow 는 여기(wrapper)에 유지할 것. */
+.receipt-body {
+  filter: drop-shadow(0 16px 20px rgba(0, 0, 0, 0.45));
+}
+
+.receipt-paper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  container-type: inline-size; /* 아래 cqw 단위의 기준 — 글자를 뷰포트가 아니라 종이 폭에 맞춘다 */
+  background: #f6f1e4;
+  color: #221e17;
+  padding: 40px 26px 26px;
+  border-radius: 2px 2px 0 0;
+}
+.receipt-scallop {
+  width: 100%;
+  height: 12px;
+  background: #f6f1e4;
+  -webkit-mask-image: radial-gradient(circle 10px at 7px 0, #000 10px, transparent 10.3px);
+  mask-image: radial-gradient(circle 10px at 7px 0, #000 10px, transparent 10.3px);
+  -webkit-mask-size: 14px 12px;
+  mask-size: 14px 12px;
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
+}
+
+.r-label {
+  font-size: 18px;
+  color: #8b8272;
+  letter-spacing: 0.04em;
+  text-align: center;
+  padding-bottom: 20px;
+  margin-bottom: 22px;
+  border-bottom: 4px dotted #c9bfa5;
+  font-weight: 600;
+}
+/* 폰트 크기는 종이 폭(cqw) 기준. vw 로 두면 종이 폭(컬럼의 82%)과 연동되지 않아
+   매출 숫자가 좌우로 잘린다. 앞줄 vw 값은 컨테이너 쿼리 미지원 브라우저용 폴백. */
+.r-store {
+  font-size: clamp(22px, 2.8vw, 40px);
+  font-size: clamp(22px, 18cqw, 42px);
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 18px;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  word-break: keep-all;
+}
+/* "39,000,000" 실측 글자폭 = 폰트 크기의 약 5.83배. 종이 안쪽폭 대비 여유를 두려면
+   16cqw(= 안쪽폭/6.25)가 상한. 이 값을 올리면 좌우가 잘린다. */
+.r-sales {
+  font-size: clamp(22px, 2.5vw, 38px);
+  font-size: clamp(22px, 16cqw, 44px);
+  font-weight: 900;
+  color: var(--red);
+  text-align: center;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.r-divider {
+  border-top: 4px dotted #c9bfa5;
+  margin: 22px 0;
+}
+.r-sub {
+  font-size: 18px;
+  color: #6b6355;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.r-sub b {
+  color: #221e17;
+  font-weight: 800;
+  font-size: 1.15em;
+}
+.r-date {
+  font-size: 18px;
+  color: #54503f;
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+.r-barcode {
+  height: 46px;
+  margin: 0 6px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    #3d3934 0px,
+    #3d3934 2px,
+    transparent 2px,
+    transparent 3px,
+    #3d3934 3px,
+    #3d3934 6px,
+    transparent 6px,
+    transparent 8px,
+    #3d3934 8px,
+    #3d3934 9px,
+    transparent 9px,
+    transparent 12px
+  );
+}
+
+@media (max-width: 1024px) {
+  .receipt-track {
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+  }
+  .receipt-col {
+    max-width: 400px;
+    width: 100%;
+  }
+  .receipt-col.center {
+    margin-top: 0;
+    order: -1;
+  }
+  /* .r-store / .r-sales 의 vw 오버라이드는 제거했다 — cqw 가 종이 폭을 따라가므로
+     좁은 화면에서도 알아서 커진다. vw 로 다시 키우면 글자가 종이 밖으로 잘린다. */
+}
+
+.profit-footnote {
+  margin-top: 48px;
+  font-size: 18px;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* PROMISE — con_bg.png 패럴랙스 배너 (03 수익분석 · 04 창업비용 사이 인터스티셜) */
+.promise {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 96px 0;
+  overflow: hidden;
+  text-align: center;
+  --text: var(--text-invert); /* 어두운 사진 배경 — kicker/promise-line/promise-sub 용 */
+}
+/* 패럴랙스 — .hero-bg 와 동일한 방식(배경만 뷰포트에 고정, 콘텐츠는 스크롤을 따라 지나간다). */
+.promise-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url("/assets/imgs/con_bg.png");
+  background-repeat: no-repeat;
+  background-position: 50% 40%;
+  background-size: cover;
+  background-attachment: fixed;
+}
+/* iOS Safari 는 background-attachment:fixed 를 무시하고 배경이 깨져 보인다 — .hero-bg 와 동일 대응. */
+@media (max-width: 1024px), (hover: none) {
+  .promise-bg {
+    background-attachment: scroll;
+  }
+}
+.promise-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 8, 6, 0.54) 0%,
+    rgba(10, 8, 6, 0.45) 45%,
+    rgba(10, 8, 6, 0.58) 100%
+  );
+}
+.promise-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.promise-line {
+  font-family: "RixYeoljeongdo", "Pretendard", sans-serif;
+  font-weight: 400;
+  font-size: clamp(30px, 4.5vw, 56px);
+  line-height: 1.35;
+  color: var(--text);
+}
+.promise-line em {
+  font-style: normal;
+  color: var(--gold-light);
+}
+.promise-sub {
+  margin-top: 24px;
+  font-size: 18px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+@media (max-width: 1024px) {
+  .promise {
+    min-height: auto;
+    padding: 80px 0;
+  }
+}
+
+/* COST */
+.cost {
+  background: var(--bg);
+  --text: var(--text-invert);
+} /* 어두운 배경 — section-head h2, 금액 열(마지막 span)이 밝은 글자를 쓰도록. cost-head 흰 줄은 자체 gold 색을 써서 영향 없음 */
+.cost-table {
+  margin-top: 8px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.cost-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+}
+.cost-row span {
+  padding: 16px 20px;
+  font-size: 18px;
+  color: var(--text-dim);
+  border-bottom: 1px solid var(--line);
+}
+.cost-row span:first-child {
+  color: var(--gold-light);
+  font-weight: 600;
+}
+.cost-row span:last-child {
+  text-align: right;
+  color: var(--text);
+}
+.cost-row.cost-head {
+  background: var(--bg-card);
+}
+.cost-row.cost-head span {
+  color: var(--gold);
+  font-size: 18px;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  border-bottom: 1px solid var(--line);
+}
+.cost-row:last-child span {
+  border-bottom: none;
+}
+@media (max-width: 1024px) {
+  .cost-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  .cost-row span:nth-child(2) {
+    display: none;
+  }
+}
+.cost-note {
+  margin-top: 40px;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.cost-badge {
+  background: var(--red);
+  color: #f7e9e4;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+.cost-note p {
+  color: var(--text-dim);
+  font-size: 18px;
+  max-width: 600px;
+}
+.cost-cta {
+  margin-top: 36px;
+}
+
+/* LOCATION */
+/* 흰 배경 정적 그리드에서 어두운 배경사진 + Swiper 캐러셀로 전환했다(2026-09-02) — 다른
+   어두운 섹션들과 같은 --text-invert 패턴을 쓴다. 배경은 .hero-bg/.hero-overlay 와 같은
+   절대배치 레이어 방식(사진 + 어두운 그라디언트)을 재사용한다. */
+.location {
+  position: relative;
+  --text: var(--text-invert);
+}
+/* 배경(블러+확대)만 담당하는 클리핑 전용 프레임 — overflow:hidden 을 섹션 자체가 아니라
+   여기 걸어야, 아래 .location-right 의 뷰포트 우측 bleed(2026-09-03)가 잘리지 않는다. */
+.location-bg-frame {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+.location-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url("/assets/imgs/bg.png");
+  background-position: center;
+  background-size: cover;
+  filter: blur(6px);
+  transform: scale(1.08); /* 블러 가장자리가 프레임 밖으로 비치지 않도록 살짝 확대 */
+}
+.location-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    100deg,
+    rgba(14, 12, 10, 0.94) 0%,
+    rgba(14, 12, 10, 0.82) 40%,
+    rgba(14, 12, 10, 0.55) 75%,
+    rgba(14, 12, 10, 0.35) 100%
+  );
+}
+/* .location 배경(.location-bg-frame/.location-overlay)이 absolute + z-index 를 쓰는 포지셔닝
+   스택이라, 뒤따르는 .wrap 이 기본(static) 상태면 페인트 순서상 배경 아래로 깔린다 — 반드시
+   같은 z-index 오버라이드가 필요하다. */
+.location .wrap {
+  position: relative;
+  z-index: 2;
+}
+
+/* minmax(0, …) 가 핵심이다 — 없으면 .store-swiper 안의 슬라이드 콘텐츠가 min-content 폭을
+   그대로 요구해서 그리드 트랙(과 Swiper 가 측정하는 컨테이너 폭)이 화면 밖으로 부풀어 오른다
+   (그리드/플렉스 아이템의 기본 min-width:auto 때문에 생기는 흔한 "blowout" 버그). */
+/* align-items:stretch(기본값) — 좌측 컬럼이 우측 캐러셀과 같은 높이로 늘어나야 아래
+   .location-left 의 justify-content:space-between 이 타이틀 블록은 위에, 컨트롤 버튼은
+   맨 아래에 붙이는 식으로 세로 여백을 분배한다(2026-09-03). */
+.location-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 56px;
+  align-items: stretch;
+}
+.location-left,
+.location-right {
+  min-width: 0;
+}
+/* 우측 캐러셀만 .wrap(max-width:1120px) 을 뚫고 나가 뷰포트 오른쪽 끝까지 꽉 채운다
+   (2026-09-03, 레퍼런스 참고). 왼쪽 텍스트는 그대로 .wrap 안에 머문다.
+   음수 margin-right 로 grid 트랙의 auto 폭을 그만큼 더 늘리는 방식 —
+   확장폭 = (뷰포트 절반) − (.wrap 콘텐츠 폭의 절반). .wrap 콘텐츠 폭 = 1120 − 32*2 = 1056,
+   그 절반이 528px. 뷰포트가 1120px 보다 좁아 .wrap 이 더 이상 중앙 정렬되지 않는 구간
+   (1024px 이하 모바일 브레이크포인트 바로 위, 1024~1120px)에서는 이 공식이 실제 필요한
+   32px 확장보다 작게 나오므로 min() 으로 "최소 32px 확장"을 보장한다. */
+.location-right {
+  margin-right: min(-32px, calc(528px - 50vw));
+}
+/* gap 은 최소 여백 보장용 — 1024px 이하(모바일 1열 스택)에서는 좌측 컬럼이 우측과 높이를
+   공유하지 않아 space-between 이 분배할 여유 공간이 없으므로 이 gap 값이 곧 실제 간격이 된다. */
+.location-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+/* 원형 이전/일시정지/다음 버튼 — 아이콘은 Lucide(chevron-left, pause/play, chevron-right) */
+.store-nav {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.store-nav-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1px solid rgba(243, 238, 226, 0.35);
+  background: rgba(14, 12, 10, 0.4);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+.store-nav-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+.store-nav-btn:hover {
+  border-color: var(--gold);
+  background: rgba(201, 162, 39, 0.15);
+}
+/* 일시정지↔재생 아이콘은 두 SVG 를 같이 두고 .is-paused 로 표시만 바꾼다 */
+.store-nav-toggle .icon-play {
+  display: none;
+}
+.store-nav-toggle.is-paused .icon-pause {
+  display: none;
+}
+.store-nav-toggle.is-paused .icon-play {
+  display: block;
+}
+.store-nav-btn.swiper-button-disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* 자동재생 남은 시간을 시각화하는 원형 타이머 — Swiper 의 autoplayTimeLeft 이벤트가
+   assets/js/script.js 에서 --store-timer(0~1)를 실시간으로 갱신하면, 그 값을 stroke-dashoffset
+   으로 변환해 12시 방향부터 시계방향으로 채운다(2026-09-03). 일시정지 중엔 이벤트가 멈추므로
+   링도 멈춘 지점에 그대로 고정된다 — 별도 처리가 필요 없다. */
+.store-nav-toggle {
+  position: relative;
+}
+/* .store-nav-btn svg{width:18px;height:18px} 보다 우선해야 해서 부모 클래스를 함께 건다
+   (셀렉터 단독 특정성(0,1,0)으로는 그 규칙(0,1,1)에 밀린다).
+   top/left 는 inset:0 이 아니라 -1px 다 — .store-nav-toggle 에 1px 테두리가 있으면 absolute
+   자식의 기준(containing block)이 테두리 안쪽 padding box 가 되어, inset:0 을 쓰면 링이
+   오른쪽·아래로 1px 밀려 버튼의 흰 테두리와 어긋난다(2026-09-03 버그 수정). */
+.store-nav-toggle .store-nav-toggle__ring {
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 48px;
+  height: 48px;
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+.store-nav-toggle__ring circle {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 132; /* 2π×21, r=21 */
+  stroke-dashoffset: calc(132 * var(--store-timer, 0));
+}
+
+.store-swiper {
+  overflow: hidden;
+}
+.swiper-slide {
+  height: auto;
+}
+/* 2026-09-03, 레퍼런스처럼 사진이 카드 전체를 꽉 채운다 — 카드 안에는 사진만 있다.
+   이름·오픈일·지도 버튼은 더 이상 카드 위에 얹지 않고 좌측 컬럼의 .store-caption 으로
+   옮겨서, 캐러셀이 넘어갈 때마다 현재 슬라이드 정보로 바뀌어 보이게 했다(아래 참고). */
+.store-card {
+  position: relative;
+  aspect-ratio: 8/9;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.store-card .photo {
+  position: absolute;
+  inset: 0;
+}
+.store-card .photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* .store-bottom 이 .store-caption(현재 슬라이드 정보) + .store-nav(컨트롤) 를 한 덩어리로
+   묶어서, .location-left 의 justify-content:space-between 이 이 덩어리 전체를 타이틀 블록
+   반대편 끝(맨 아래)에 붙인다 — 정보와 컨트롤 버튼이 항상 붙어 다니게 하려는 것. */
+.store-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+/* JS(initStoreSwiper 의 syncCaption)가 Swiper 의 slideChange 마다 내용을 다시 그린다.
+   min-height 는 지점명이 한 줄/두 줄로 바뀌어도 버튼 위치가 출렁이지 않게 하는 최소 보장값. */
+.store-caption {
+  min-height: 96px;
+}
+.store-caption h4 {
+  font-size: clamp(20px, 2.4vw, 26px);
+  color: var(--text);
+  font-weight: 800;
+}
+.store-caption .date {
+  color: var(--gold);
+  font-size: 18px;
+  letter-spacing: 0.04em;
+  margin-top: 8px;
+}
+/* 지점별 네이버 지도 링크 — 새 창으로 열린다 */
+/* border/color 는 var(--line)/var(--text-dim) 대신 밝은 값을 쓴다 — 이 버튼이 얹히는
+   .location 배경이 어두워서 어두운 톤(가독성 낮음)으론 테두리도, 글자도 잘 안 보인다
+   (2026-09-03, .store-nav-btn 과 같은 밝기의 테두리로 맞췄다). */
+.map-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 16px;
+  border: 1px solid rgba(243, 238, 226, 0.35);
+  border-radius: 2px;
+  padding: 10px 16px;
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+.map-btn svg {
+  width: 14px;
+  height: 14px;
+  fill: var(--gold);
+  flex-shrink: 0;
+}
+.map-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold-light);
+  background: rgba(201, 162, 39, 0.08);
+}
+@media (max-width: 1024px) {
+  .location-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+  /* 모바일 1열 스택에서는 이미지가 좌측 텍스트와 폭을 공유하지 않으므로, 우측만 비대칭으로
+     bleed 시키면 카드가 어색하게 잘린다 — .wrap 폭 그대로 유지한다. */
+  .location-right {
+    margin-right: 0;
+  }
+}
+
+.inquiry-grid {
+  margin-top: 80px;
+  padding-top: 64px;
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 72px;
+}
+/* 폰트 크기를 다른 섹션 타이틀과 통일했다(2026-09-03, .comp-title 기준). */
+.inquiry-left h3 {
+  font-family: "RixYeoljeongdo", "Pretendard", sans-serif;
+  font-weight: 400;
+  font-size: clamp(34px, 5vw, 64px);
+  line-height: 1.4;
+  margin-bottom: 24px;
+  color: var(--text);
+}
+.inquiry-left h3 em {
+  font-style: normal;
+  font-weight: 400;
+  color: var(--red);
+}
+.inquiry-left p {
+  color: var(--text-dim);
+  font-size: 18px;
+  margin-bottom: 36px;
+}
+.contact-line {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+}
+.contact-line:last-child {
+  border-bottom: 1px solid var(--line);
+}
+.contact-line .k {
+  color: var(--muted);
+  font-size: 18px;
+  width: 110px;
+  flex-shrink: 0;
+}
+.contact-line .v {
+  color: var(--gold-light);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+label {
+  display: block;
+  font-size: 18px;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+input,
+select,
+textarea {
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 14px 16px;
+  font-size: 18px;
+  font-family: inherit;
+  border-radius: 2px;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+.submit-btn {
+  margin-top: 8px;
+  background: var(--gold);
+  color: #1b1608;
+  border: none;
+  padding: 17px;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.submit-btn:hover {
+  background: var(--gold-light);
+}
+
+/* shadcn/ui Select 참고 커스텀 드롭다운(.select-field, 2026-09-11 신규) — 형제 시안 0007-B 의
+   동일 컴포넌트를 이 프로젝트 아이덴티티로 재현했다. 네이티브 <select> 는 브라우저마다
+   화살표/패널 스타일을 못 건드려 통일된 외형을 못 낸다. #inquiryForm(05 인라인 폼)·
+   .inquiry-sheet-form(문의하기 Bottom Sheet)·.sticky-inquiry-bar(하단 고정 문의 폼 바)
+   세 곳의 "창업유형" select 를 이 컴포넌트로 교체했다. initCustomSelects(script.js)가
+   열기/닫기·키보드 탐색·선택 상태를 관리한다. 기본값은 트리거 아래로 펼치는 일반적인
+   드롭다운이고, 화면 맨 아래 고정된 .sticky-inquiry-bar 안에서만 위쪽으로 펼치게 별도로
+   뒤집는다(아래 .sticky-inquiry-bar 전용 오버라이드 참고). 폰트 크기는 프로젝트 전역 규칙
+   (18~96px)을 따라 18px 로 둔다 — 0007-B 원본(14px)보다 크므로 트리거 높이도 44px 로
+   맞췄다. */
+/* --text:#333333 로 재선언 — 이 흰 트리거/패널은 05 매장위치(.location)처럼
+   --text:var(--text-invert) 로 뒤집힌 어두운 섹션 안에서도 쓰이므로, 트러스트 카드
+   (.trust-item)와 같은 방식으로 밝은 카드용 값을 다시 뒤집어야 한다 — 안 그러면 어두운
+   섹션 안에서 흰 패널 위 글자가 연한 크림색(--text-invert)이 되어 거의 안 보인다. */
+.select-field {
+  position: relative;
+  flex: 1 1 130px;
+  min-width: 0;
+  --text: #333333;
+}
+.select-field-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 2px;
+  border: 1px solid var(--line);
+  background: var(--bg-card);
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 18px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+.select-field-trigger:hover {
+  border-color: rgba(201, 162, 39, 0.5);
+}
+.select-field-trigger:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.18);
+}
+.select-field.open .select-field-trigger {
+  border-color: var(--gold);
+}
+.select-field.has-value .select-field-value {
+  color: var(--text);
+  font-weight: 600;
+}
+.select-field-chevron {
+  width: 18px;
+  height: 18px;
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+.select-field.open .select-field-chevron {
+  transform: rotate(180deg);
+}
+.select-field-list {
+  list-style: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 10;
+  margin: 0;
+  padding: 4px;
+  max-height: 260px;
+  overflow-y: auto;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  transform: translateY(-4px);
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+.select-field.open .select-field-list {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+  pointer-events: auto;
+}
+.select-field-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 2px;
+  font-size: 18px;
+  color: var(--text);
+  cursor: pointer;
+}
+.select-field-item:hover,
+.select-field-item:focus {
+  background: #f1ede3;
+  outline: none;
+}
+.select-field-item.selected {
+  font-weight: 700;
+}
+.select-field-check {
+  width: 16px;
+  height: 16px;
+  color: var(--gold);
+  flex-shrink: 0;
+  visibility: hidden;
+}
+.select-field-item.selected .select-field-check {
+  visibility: visible;
+}
+
+/* .sticky-inquiry-form 은 트리거를 44px 로 맞추고 나머지 input 과 같은 flex 규칙을 물려받는다. */
+.sticky-inquiry-form .select-field {
+  flex: 1 1 140px;
+}
+
+/* 화면 맨 아래 고정된 .sticky-inquiry-bar 안에서는 패널이 기본값(아래로 펼침)대로면
+   뷰포트 밖으로 나간다 — 이 컨텍스트에서만 위쪽으로 펼치게 뒤집는다. */
+.sticky-inquiry-bar .select-field-list {
+  top: auto;
+  bottom: calc(100% + 6px);
+  transform: translateY(4px);
+}
+.sticky-inquiry-bar .select-field.open .select-field-list {
+  transform: translateY(0);
+}
+
+/* 개인정보처리방침 동의 — #inquiryForm(05 인라인 폼)·.inquiry-sheet-form(문의하기 Bottom
+   Sheet)·.sticky-inquiry-bar(하단 고정 문의 폼 바) 세 곳이 공유하는 동의 체크박스
+   (2026-09-11 신규, 2026-09-11 사용자 제시 참고 이미지로 원형→둥근 사각 배지로 통일).
+   네이티브 체크박스는 시각적으로만 숨기고(position:absolute, opacity:0 — 포커스/키보드/
+   유효성 검사는 그대로 유지) 둥근 사각 배지(.form-agree-check)로 대체한다. "전문보기"는
+   <label> 바깥의 형제 요소로 둬서 클릭해도 체크박스가 토글되지 않게 한다. 배지는 --gold
+   단색이라 별도 토큰 없이 기존 색상만 재사용한다. .form-agree-input 은 위 736번째 줄
+   부근의 스코프 없는 전역 `input, select, textarea{width:100%;...}` 규칙을 덮어써야 한다
+   — 안 그러면 숨긴 체크박스가 컨테이너 전체 폭으로 늘어나 레이아웃이 깨진다(클래스
+   셀렉터가 타입 셀렉터보다 우선해 별도 스코프 없이도 이긴다). */
+/* .form-agree/.form-agree-more 의 16px 는 프로젝트 전역 폰트 크기 규칙(18~96px, 예외
+   없음)의 두 번째 예외다(2026-09-11, 사용자 확정 — 첫 예외는 .hero-wordmark). 체크박스
+   라벨은 다른 본문 텍스트와 같은 눈높이로 읽히지 않아도 되는 보조 요소라 사용자가
+   18px 아래로 줄여도 된다고 명시적으로 승인했다. 이 두 셀렉터 밖에서는 계속 18px
+   최소값을 지킨다. */
+.form-agree-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.form-agree {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  cursor: pointer;
+}
+.form-agree-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+/* 봇 스팸 방지용 허니팟(사람 눈에는 안 보여야 실효성이 있다) — #inquiryForm/.inquiry-sheet-form/
+   #stickyInquiryForm 세 곳 공용. .form-agree-input 과 같은 기법(0~1px 크기)으로 시각적으로만
+   숨기고 tabindex="-1"(HTML)로 키보드 포커스도 건너뛴다. */
+.hp-field {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.form-agree-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  border: 2px solid var(--line);
+  color: transparent;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+.form-agree-check svg {
+  width: 12px;
+  height: 12px;
+}
+.form-agree-input:checked + .form-agree-check {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #ffffff;
+}
+.form-agree-input:focus-visible + .form-agree-check {
+  outline: 2px solid var(--gold-light);
+  outline-offset: 2px;
+}
+.form-agree-more {
+  font-size: 16px;
+  color: var(--text-dim);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  flex-shrink: 0;
+}
+/* --text-dim(#B3A995, 밝은 톤)은 다크 배경 전용이다 — #inquiryForm(어두운 .location
+   섹션 바로 위)과 .sticky-inquiry-bar(다크 바)에서는 기본값 그대로 잘 보이지만,
+   .inquiry-sheet-form 은 흰 모달 카드라 같은 값이 저대비로 거의 안 보인다. 트러스트
+   카드류와 같은 이유로 이 컨텍스트만 var(--muted)(어두운 톤, 다른 흰 배경 요소에서
+   이미 쓰는 색)로 다시 뒤집는다. */
+.inquiry-sheet-form .form-agree-more {
+  color: var(--muted);
+}
+
+/* .sticky-inquiry-bar 는 --text-invert 로 뒤집는 섹션 스코프 밖(body 직속 형제)이라
+   .form-agree 의 기본 색(var(--text), 밝은 카드용 어두운 글자)이 다크 바 배경에서
+   거의 안 보인다 — 트러스트 카드류와 반대 방향으로 재반전한다. 배지 테두리도 var(--line)
+   (어두운 색)이 다크 배경에서 거의 안 보여 밝은 반투명 테두리로 바꾼다. */
+.sticky-inquiry-form .form-agree-row {
+  flex-shrink: 0;
+}
+.sticky-inquiry-form .form-agree {
+  color: var(--text-invert);
+  white-space: nowrap;
+}
+.sticky-inquiry-form .form-agree-check {
+  border-color: rgba(243, 238, 226, 0.35);
+}
+
+/* #inquiryForm 도 .location 의 어두운 섹션 배경 위에 바로 앉아 있어(흰 카드로 감싸지
+   않음) 배지 테두리 기본값 var(--line)(어두운 색)이 체크 해제 상태에서 거의 안 보인다
+   — .sticky-inquiry-form 과 같은 이유·같은 처방. .form-agree 자체의 글자색은 이미
+   var(--text)가 .location 스코프에서 --text-invert 로 뒤집혀 있어 손댈 필요 없다. */
+#inquiryForm .form-agree-check {
+  border-color: rgba(243, 238, 226, 0.35);
+}
+
+@media (max-width: 1024px) {
+  .inquiry-grid {
+    grid-template-columns: 1fr;
+  }
+  .field-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 우측 스크롤바에 붙는 세로형 문의 퀵 탭 — 2026-09-09, 우측 하단 원형 플로팅 버튼 →
+   다크 배경 세로 탭(QUICK CONTACT 서브라벨 포함) → 골드 그라디언트 + wordmarkIntro 팝
+   인트로 → wordmarkShine 흐름 반짝임, 이 순서로 바꾸다가 같은 날 사용자가 애니메이션을
+   완전히 빼고 배경을 단색 --gold-light(#E8CD7A)로 고정해달라 요청해 최종적으로 정적인
+   단색 탭이 됐다. body 직속 형제라 :root 기본 --text 대신 명시적으로 배색을 지정한다.
+   글자는 writing-mode:vertical-rl + text-orientation:upright 로 눕히지 않고 위→아래로
+   쌓는다. 2026-09-11, 데스크톱(>1024px)에 .sticky-inquiry-bar(하단 고정 문의 폼 바)가
+   추가되며 같은 화면에 문의 CTA 가 두 개 떠 있게 됐다 — 사용자 요청으로 PC 에서는 이
+   탭을 숨기고 모바일(≤1024px, 그 바가 숨는 폭)에서만 보이게 뒤집었다. */
+.inquiry-fab {
+  display: none;
+  position: fixed;
+  right: 0;
+  top: 50%;
+  z-index: 90;
+  transform: translateY(-50%);
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 28px 14px;
+  border: none;
+  border-radius: 14px 0 0 14px;
+  cursor: pointer;
+  font-family: inherit;
+  background: var(--gold-light);
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.4);
+}
+.inquiry-fab__label {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.1em;
+  color: #1b1608;
+}
+@media (max-width: 1024px) {
+  .inquiry-fab {
+    display: flex;
+    padding: 22px 10px;
+    gap: 12px;
+  }
+}
+
+/* 문의하기 Bottom Sheet — 2026-09-04에 추가된 팝업 모달(오버레이 딤 + 카드, PC 는 중앙
+   모달/모바일은 하단 고정 시트). RixYeoljeongdo/골드 팔레트 복원과 별개로 계속 유지한다.
+   트리거 클릭 시 initInquirySheet() 가 hidden 을 떼고 다음 프레임에 .is-open 을 붙인다
+   (같은 프레임에 붙이면 transform 시작값이 적용될 새가 없어 애니메이션이 생략된다).
+   시트 자체는 어두운 배경 섹션 스코프 밖(body 직속 형제)에 있어 :root 기본값(--text:#333,
+   밝은 카드용)을 그대로 쓴다 — 다른 흰 카드(.trust-item/.cost-row.cost-head/모바일 nav)와
+   같은 방식으로, 별도 재선언 없이 골드 포인트만 얹는다. */
+.inquiry-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  background: rgba(0, 0, 0, 0);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.2s ease,
+    background-color 0.2s ease,
+    visibility 0s 0.2s;
+}
+.inquiry-sheet-backdrop.is-open {
+  opacity: 1;
+  visibility: visible;
+  background: rgba(0, 0, 0, 0.6);
+  transition:
+    opacity 0.2s ease,
+    background-color 0.2s ease;
+}
+.inquiry-sheet {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  max-height: 85vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-card);
+  border-radius: 12px;
+  box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.5);
+  transform: translateY(12px) scale(0.98);
+  opacity: 0;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+.inquiry-sheet-backdrop.is-open .inquiry-sheet {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.inquiry-sheet-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+.inquiry-sheet-close svg {
+  width: 16px;
+  height: 16px;
+}
+.inquiry-sheet-close:hover {
+  background: #f1ede3;
+  color: var(--text);
+}
+
+/* 스크롤은 유지하되 스크롤바 자체만 시각적으로 숨긴다(2026-09-11 요청) — 특히 모바일
+   바텀시트에서 우측 끝에 세로 막대가 그대로 보여 카드 테두리처럼 어색하게 걸렸다. */
+.inquiry-sheet-scroll {
+  overflow-y: auto;
+  padding: 32px 28px 20px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.inquiry-sheet-scroll::-webkit-scrollbar {
+  display: none;
+}
+.inquiry-sheet-brand {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.inquiry-sheet-brand img {
+  height: 96px;
+  width: auto;
+  border-radius: 8px;
+}
+.inquiry-sheet-desc {
+  text-align: center;
+  font-size: 15px;
+  color: var(--text);
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e7e1d3;
+}
+
+.inquiry-sheet-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.inquiry-sheet-form .field {
+  min-width: 0;
+}
+.inquiry-sheet-form label {
+  display: block;
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.inquiry-sheet-form input,
+.inquiry-sheet-form select,
+.inquiry-sheet-form textarea {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #dcd5c4;
+  color: var(--text);
+  padding: 10px 14px;
+  font-size: 14px;
+  font-family: inherit;
+  border-radius: 6px;
+}
+.inquiry-sheet-form input::placeholder,
+.inquiry-sheet-form textarea::placeholder {
+  color: var(--muted);
+}
+.inquiry-sheet-form input:focus,
+.inquiry-sheet-form select:focus,
+.inquiry-sheet-form textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.18);
+}
+.inquiry-sheet-form textarea {
+  resize: vertical;
+  min-height: 88px;
+}
+/* .select-field-trigger(버튼)는 위 .inquiry-sheet-form input,select,textarea 셀렉터에
+   안 걸린다(태그가 button) — 그래서 이 모달 안에서만 옆 input 은 연한 테두리(#DCD5C4/
+   6px 라운드)인데 창업유형 트리거만 기본값(var(--line), 어두운 색/2px 라운드)이라 유독
+   진하고 각져 보이는 불일치가 있었다(2026-09-11 발견). 같은 값으로 맞춘다. */
+.inquiry-sheet-form .select-field-trigger {
+  border-color: #dcd5c4;
+  border-radius: 6px;
+  font-size: 14px;
+}
+.inquiry-sheet-form .select-field-list {
+  border-color: #dcd5c4;
+  border-radius: 6px;
+}
+.inquiry-sheet-form .select-field-item {
+  font-size: 14px;
+}
+/* 위 .inquiry-sheet-form label/.inquiry-sheet-form input 규칙이 class+type 특이성이라, 같은
+   .inquiry-sheet-form 안에 있는 .form-agree(label)·.form-agree-input(숨김 체크박스)를
+   특이성으로 이겨버린다(0,0,1,1 > 0,0,1,0) — 체크박스가 컨테이너 전체 폭으로 늘어나는
+   회귀뿐 아니라, display 만 덮어쓰고 넘어갔던 처음 수정에서는 .inquiry-sheet-form label 의
+   font-size:14px/font-weight:500/margin-bottom:6px 가 그대로 이겨버려 "개인정보처리방침
+   동의" 글자만 옆의 .form-agree-more(전문보기)보다 작고 아래로 밀려 보이는 회귀가
+   남아 있었다(2026-09-11 실제로 발견됨). .form-agree 가 원래 선언한 값을 전부 다시
+   명시해 확실히 이기게 한다(형제 시안 0007-B 에서 같은 특이성 문제를 같은 방식으로
+   고쳤다). font-size 는 위 .form-agree 기본값(16px, 예외 승인)과 맞춘다. */
+.inquiry-sheet-form .form-agree {
+  display: flex;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0;
+}
+.inquiry-sheet-form .form-agree-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+}
+
+.inquiry-sheet-submit {
+  flex-shrink: 0;
+  margin: 0;
+  border: none;
+  cursor: pointer;
+  padding: 16px 32px;
+  background: var(--gold);
+  color: #1b1608;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 0.15s ease;
+}
+.inquiry-sheet-submit:hover {
+  background: var(--gold-light);
+}
+.inquiry-sheet-submit svg {
+  width: 16px;
+  height: 16px;
+}
+.inquiry-sheet-submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+@media (max-width: 1024px) {
+  .inquiry-sheet-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .inquiry-sheet {
+    max-width: 100%;
+    max-height: 88vh;
+    border-radius: 16px 16px 0 0;
+    transform: translateY(100%);
+  }
+  .inquiry-sheet-backdrop.is-open .inquiry-sheet {
+    transform: translateY(0);
+  }
+  .inquiry-sheet-scroll {
+    padding: 28px 24px 16px;
+  }
+  /* 모바일 문의 모달에서 동의 배지가 유독 커 보인다는 피드백(2026-09-11) — 배지 크기와
+     간격을 데스크톱 기본값(22px)보다 한 단계 더 좁힌다. */
+  .inquiry-sheet-form .form-agree-row {
+    gap: 8px;
+  }
+  .inquiry-sheet-form .form-agree {
+    gap: 6px;
+  }
+  .inquiry-sheet-form .form-agree-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+  }
+  .inquiry-sheet-form .form-agree-check svg {
+    width: 11px;
+    height: 11px;
+  }
+}
+
+/* 공지사항 팝업 모달 — CMS(franchise_popups)에서 오늘 하루 "보지 않기"로 닫지 않은 첫 항목을
+   가운데 모달로 띄운다(initPopup(), #popupBackdrop). 문의하기 Bottom Sheet(.inquiry-sheet-*,
+   바로 위 블록)와 열기/닫기 타이밍은 그대로 재사용한다 — 딤 배경 opacity/background-color
+   .2s ease + visibility 는 0s .2s 지연으로 opacity 전환이 끝난 뒤에만 hidden 취급되게 하고,
+   JS(script.js initPopup/initInquirySheet 공통) 는 .is-open 제거 후 350ms 뒤에 hidden 속성을
+   되돌린다. 다만 저 시트는 화면 하단에서 올라오는 카드인 반면 이 팝업은 화면 중앙에 뜨는
+   일반 모달이라, 이동 방향(translateY) 없이 scale+opacity 로만 표현해 두 컴포넌트를 시각적
+   으로 구분한다. body 직속 형제(다크 섹션 스코프 밖)라 :root 기본 --text(#333, 밝은 카드용)
+   를 그대로 쓴다 — .inquiry-sheet-desc/.inquiry-sheet-form label 과 같은 이유로 본문 크기
+   예외 없이 13~14px 의 보조 UI 텍스트를 그대로 따른다. 좌우 슬라이드는 05 매장위치와 같은
+   Swiper.js 를 재사용한다(.popup-swiper — initPopup(), 아래는 그 위에 얹는 스킨). 항목이
+   2개 이상이면 화살표(.swiper-button-prev/next)와 점 페이지네이션(.swiper-pagination)이
+   나타나고, 1개면 JS 가 둘 다 hidden 처리해 기존과 동일한 단일 모달로 보인다. */
+.popup-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 320;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.2s ease,
+    background-color 0.2s ease,
+    visibility 0s 0.2s;
+}
+.popup-backdrop.is-open {
+  opacity: 1;
+  visibility: visible;
+  background: rgba(0, 0, 0, 0.6);
+  transition:
+    opacity 0.2s ease,
+    background-color 0.2s ease;
+}
+.popup-modal {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  background: var(--bg-card);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.5);
+  transform: scale(0.96);
+  opacity: 0;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+.popup-backdrop.is-open .popup-modal {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.popup-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.35);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease;
+}
+.popup-close svg {
+  width: 16px;
+  height: 16px;
+}
+.popup-close:hover {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.popup-swiper {
+  position: relative;
+}
+.popup-slide {
+  display: block;
+  color: inherit;
+}
+
+/* Swiper 기본 화살표(font 아이콘 + 44px)를 기존 팝업 디자인의 반투명 원형 버튼으로 덮어쓴다.
+   .popup-swiper 스코프로 좁혀서 05 매장위치 캐러셀(.store-swiper, 커스텀 .store-nav-prev/next
+   를 쓰므로 원래 Swiper 기본 클래스와 무관)에는 영향 없다. */
+.popup-swiper .swiper-button-prev,
+.popup-swiper .swiper-button-next {
+  width: 32px;
+  height: 32px;
+  margin-top: -16px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.35);
+  color: #ffffff;
+  transition: background-color 0.15s ease;
+}
+.popup-swiper .swiper-button-prev:hover,
+.popup-swiper .swiper-button-next:hover {
+  background: rgba(0, 0, 0, 0.55);
+}
+.popup-swiper .swiper-button-prev::after,
+.popup-swiper .swiper-button-next::after {
+  font-size: 14px;
+  font-weight: 700;
+}
+.popup-swiper .swiper-button-prev {
+  left: 12px;
+}
+.popup-swiper .swiper-button-next {
+  right: 12px;
+}
+
+.popup-image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.popup-title {
+  padding: 20px 24px 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+.popup-content {
+  padding: 0 24px 20px;
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+/* 점 하나당 슬라이드 하나(Swiper 기본 페이지네이션 불릿) — 클릭하면 그 슬라이드로 넘어가고,
+   현재 위치는 알약 모양으로 늘어난다. 슬라이드(이미지) 위에 떠 있는 오버레이라, 이미지가
+   밝든 어둡든 dot 이 묻히지 않도록 하단에 어두운 그라디언트 스크림을 함께 깐다. */
+.popup-pagination {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0 !important;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 0 10px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0));
+  pointer-events: none;
+}
+.popup-pagination .swiper-pagination-bullet {
+  pointer-events: auto;
+}
+.popup-pagination .swiper-pagination-bullet {
+  width: 9px;
+  height: 9px;
+  margin: 0 4.5px;
+  opacity: 1;
+  background: #dcd5c4;
+  transition:
+    background-color 0.15s ease,
+    width 0.2s ease;
+}
+.popup-pagination .swiper-pagination-bullet:hover {
+  background: var(--text-dim);
+}
+.popup-pagination .swiper-pagination-bullet-active {
+  width: 28px;
+  border-radius: 999px;
+  background: var(--gold);
+}
+
+.popup-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 24px;
+  border-top: 1px solid #e7e1d3;
+}
+.popup-dismiss-today {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--muted);
+}
+.popup-dismiss-today input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--gold);
+  cursor: pointer;
+}
+.popup-footer-close {
+  flex-shrink: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--muted);
+  transition: color 0.15s ease;
+}
+.popup-footer-close:hover {
+  color: var(--text);
+}
+
+@media (max-width: 1024px) {
+  .popup-modal {
+    max-width: 320px;
+  }
+  .popup-swiper .swiper-button-prev,
+  .popup-swiper .swiper-button-next {
+    width: 28px;
+    height: 28px;
+    margin-top: -14px;
+  }
+  .popup-swiper .swiper-button-prev::after,
+  .popup-swiper .swiper-button-next::after {
+    font-size: 12px;
+  }
+  .popup-title {
+    padding: 18px 20px 8px;
+  }
+  .popup-content {
+    padding: 0 20px 18px;
+  }
+  .popup-footer {
+    padding: 12px 20px;
+  }
+}
+
+/* FOOTER */
+/* 하단 padding 은 기본값(56px 0 40px)에 데스크톱 .sticky-inquiry-bar 실측 높이 여유분
+   (약 80px)을 더했다 — 안 더하면 그 바가 footer 마지막 줄을 덮는다. ≤1024px 에서는
+   바가 숨으므로 아래 미디어쿼리가 원래 40px 로 되돌린다. */
+footer {
+  position: relative;
+  z-index: 1;
+  background: #0a0806;
+  border-top: 1px solid var(--line);
+  padding: 56px 0 calc(40px + 80px);
+}
+.footer-grid {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.footer-logo img {
+  height: 28px;
+  border-radius: 3px;
+}
+.footer-logo span {
+  color: var(--gold-light);
+  font-weight: 700;
+  font-size: 18px;
+}
+footer .meta {
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1.9;
+}
+footer .socials a {
+  color: var(--text-dim);
+  font-size: 18px;
+  margin-left: 18px;
+}
+@media (max-width: 1024px) {
+  footer {
+    padding-bottom: 40px;
+  }
+}
+
+/* ============================================================
+   하단 고정 문의 폼 바(.sticky-inquiry-bar, 2026-09-11 신규) — 형제 시안 0007-B 의
+   동일 컴포넌트를 이 프로젝트 아이덴티티로 재현했다. 데스크톱(>1024px) 전용 — 모바일은
+   이미 우측 세로 퀵 탭(.inquiry-fab)이 같은 역할을 하므로 ≤1024px 에서는 숨긴다(대체가
+   아니라 중복 방지). 자동으로 열리거나 애니메이션되지 않는 상시 정적 바다.
+   input/select 는 736번째 줄 부근의 스코프 없는 전역 `input, select, textarea` 셀렉터
+   (흰 배경/var(--line) 테두리/18px 글자)를 그대로 물려받는다 — 여기서는 높이·여백만
+   좁혀 한 줄에 배치한다. 체크박스만 그 전역 규칙(width:100%짜리 흰 박스가 됨)을
+   깨뜨리므로 별도로 리셋한다.
+   ============================================================ */
+.sticky-inquiry-bar {
+  display: flex;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 80;
+  align-items: center;
+  gap: 24px;
+  background: var(--bg-card-2);
+  border-top: 1px solid var(--line);
+  padding: 14px 32px;
+}
+.sticky-inquiry-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.sticky-inquiry-brand img {
+  height: 28px;
+  width: auto;
+  border-radius: 3px;
+}
+.sticky-inquiry-brand strong {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--gold-light);
+}
+.sticky-inquiry-form {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+.sticky-inquiry-form input,
+.sticky-inquiry-form select {
+  height: 44px;
+  padding: 0 14px;
+  flex: 1 1 140px;
+  min-width: 0;
+}
+.sticky-inquiry-submit {
+  flex-shrink: 0;
+  height: 44px;
+  padding: 0 28px;
+  border: none;
+  cursor: pointer;
+  border-radius: 2px;
+  background: var(--gold);
+  color: #1b1608;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  font-family: inherit;
+  transition: background-color 0.15s ease;
+}
+.sticky-inquiry-submit:hover {
+  background: var(--gold-light);
+}
+.sticky-inquiry-submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+@media (max-width: 1024px) {
+  .sticky-inquiry-bar {
+    display: none;
+  }
+}
+
+/* focus visibility for accessibility */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--gold-light);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  * {
+    transition: none !important;
+  }
+  .hero-bg {
+    background-attachment: scroll;
+  } /* 패럴랙스도 움직임이므로 함께 끈다 */
+  .promise-bg {
+    background-attachment: scroll;
+  }
+  .hero-wordmark {
+    animation: none;
+    transform: none;
+    opacity: 1;
+  }
+  .comp-card,
+  .trust-item,
+  .review-item,
+  .meat-card,
+  .sb-item {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .comp-card:hover,
+  .trust-item:hover,
+  .review-item:hover .review-phone,
+  .sb-item:hover .circle img {
+    transform: none;
+  }
+  .comp-card:hover .comp-num,
+  .trust-item:hover h5 {
+    transform: none;
+  }
+  .comp-card b {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+  .accent-impact {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

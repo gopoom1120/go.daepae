@@ -1,0 +1,197 @@
+{
+  "_readme": "고품격대패 랜딩 콘텐츠 단일 진실 공급원. 이 파일만 고치면 화면이 바뀐다. desc 로 끝나는 필드는 <b> 같은 인라인 태그를 그대로 쓸 수 있고(HTML 로 삽입됨), 그 외 텍스트 필드는 자동 이스케이프된다.",
+  "contact": {
+    "phone": "1877-1960",
+    "instagram": "@go_daepae",
+    "instagramUrl": "https://www.instagram.com/go_daepae"
+  },
+  "competency": [
+    {
+      "num": "Premium Quality",
+      "title": "믿을 수 있는 원육",
+      "desc": "해썹(HACCP) 인증된 <b>국내산 6개월 미만 암퇘지</b>를 사용하며, UN으로부터 인증받은 친환경 브랜드 칠레산 <b>'아그로수퍼'</b>를 사용합니다."
+    },
+    {
+      "num": "고품격 샐러드",
+      "title": "25종 이상의 셀프바",
+      "desc": "다양한 셀프바 구성으로 고객 만족을 높여 또다시 찾아오게 만드는 <b>고품격 샐러드의 매력</b>. 상차림 없이 직접 즐기는 방식입니다."
+    },
+    {
+      "num": "이름에 걸맞는 공간",
+      "title": "물결형 인테리어",
+      "desc": "깔끔함과 편안한 공간 구성과 브랜드의 상징적인 <b>물결형 인테리어</b>를 통해 브랜드만의 분위기와 품격이 자연스럽게 어울러지는 공간."
+    }
+  ],
+  "trust": [
+    {
+      "label": "HACCP",
+      "desc": "식품의약품안전처 안전관리인증"
+    },
+    {
+      "label": "7호점",
+      "desc": "브랜드 완성도 관리를 위한 전수창업 제한 운영"
+    },
+    {
+      "label": "25종+",
+      "desc": "셀프바 쌈채소 & 부재료 구성"
+    },
+    {
+      "label": "ECO",
+      "desc": "유해가스 없는 친환경 스마트언더렌지"
+    }
+  ],
+  "meat": [
+    {
+      "image": "/assets/imgs/meat_modum.png",
+      "name": "모듬 한판"
+    },
+    {
+      "image": "/assets/imgs/meat_dwaeji.png",
+      "name": "돼지 한판"
+    },
+    {
+      "image": "/assets/imgs/meat_ori_dwaeji.png",
+      "name": "오리&돼지 한판"
+    },
+    {
+      "image": "/assets/imgs/meat_samgyeop.png",
+      "name": "삼겹 대패"
+    },
+    {
+      "image": "/assets/imgs/meat_byeol.png",
+      "name": "뻘항정 대패"
+    },
+    {
+      "image": "/assets/imgs/meat_kkot_samgyeop.png",
+      "name": "꽃삼겹 대패"
+    },
+    {
+      "image": "/assets/imgs/meat_kkot_moksal.png",
+      "name": "꽃목살 대패"
+    },
+    {
+      "image": "/assets/imgs/meat_kkot_deungsim.png",
+      "name": "++꽃등심 대패"
+    },
+    {
+      "image": "/assets/imgs/meat_ori.png",
+      "name": "오리 대패"
+    }
+  ],
+  "selfbar": [
+    {
+      "image": "/assets/imgs/sb_albaechu.png",
+      "name": "알배추"
+    },
+    {
+      "image": "/assets/imgs/sb_sangchu.png",
+      "name": "상추"
+    },
+    {
+      "image": "/assets/imgs/sb_romaine.jpg",
+      "name": "로메인"
+    },
+    {
+      "image": "/assets/imgs/sb_kkaennip.jpg",
+      "name": "깻잎"
+    },
+    {
+      "image": "/assets/imgs/sb_kale.jpg",
+      "name": "케일"
+    },
+    {
+      "image": "/assets/imgs/sb_goguma.png",
+      "name": "고구마"
+    },
+    {
+      "image": "/assets/imgs/sb_yeongeun.jpg",
+      "name": "연근"
+    },
+    {
+      "image": "/assets/imgs/sb_kongnamul.png",
+      "name": "콩나물"
+    }
+  ],
+  "profit": [
+    {
+      "name": "왕십리 본점",
+      "open": "2024. 11. 27 오픈",
+      "salesWon": 47000000,
+      "rate": 36.1,
+      "tall": false
+    },
+    {
+      "name": "천호 직영점",
+      "open": "2025. 03. 04 오픈",
+      "salesWon": 67000000,
+      "rate": 40.2,
+      "tall": true
+    },
+    {
+      "name": "시흥 은계점",
+      "open": "2026. 01. 28 오픈",
+      "salesWon": 39000000,
+      "rate": 33.3,
+      "tall": false
+    }
+  ],
+  "cost": {
+    "head": {
+      "item": "항목",
+      "detail": "내용",
+      "price": "금액"
+    },
+    "rows": [
+      {
+        "item": "가맹비",
+        "detail": "브랜드 사용권 및 가맹 계약",
+        "price": "상담 시 안내"
+      },
+      {
+        "item": "교육비",
+        "detail": "레시피 · 운영 시스템 전수",
+        "price": "상담 시 안내"
+      },
+      {
+        "item": "보증금",
+        "detail": "계약 종료 시 반환",
+        "price": "상담 시 안내"
+      },
+      {
+        "item": "인테리어",
+        "detail": "물결형 인테리어 · 셀프바 설비",
+        "price": "상담 시 안내"
+      },
+      {
+        "item": "주방/설비",
+        "detail": "스마트언더렌지 AC-2200G 등",
+        "price": "상담 시 안내"
+      },
+      {
+        "item": "초도물품",
+        "detail": "오픈 초기 식자재 · 부자재",
+        "price": "상담 시 안내"
+      }
+    ]
+  },
+  "stores": [
+    {
+      "name": "왕십리 본점",
+      "date": "2024. 11. 27 OPEN",
+      "image": "/assets/imgs/bg.png",
+      "mapUrl": "https://map.naver.com/p/search/고품격대패 왕십리"
+    },
+    {
+      "name": "천호 직영점",
+      "date": "2025. 03. 04 OPEN",
+      "image": "/assets/imgs/bg.png",
+      "mapUrl": "https://map.naver.com/p/search/고품격대패 천호"
+    },
+    {
+      "name": "시흥 은계점",
+      "date": "2026. 01. 28 OPEN",
+      "image": "/assets/imgs/bg.png",
+      "mapUrl": "https://map.naver.com/p/search/고품격대패 시흥 은계"
+    }
+  ]
+}
