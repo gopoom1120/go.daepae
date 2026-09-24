@@ -2469,7 +2469,11 @@ textarea {
 
 /* Swiper 기본 화살표(font 아이콘 + 44px)를 기존 팝업 디자인의 반투명 원형 버튼으로 덮어쓴다.
    .popup-swiper 스코프로 좁혀서 05 매장위치 캐러셀(.store-swiper, 커스텀 .store-nav-prev/next
-   를 쓰므로 원래 Swiper 기본 클래스와 무관)에는 영향 없다. */
+   를 쓰므로 원래 Swiper 기본 클래스와 무관)에는 영향 없다.
+   Swiper 기본 아이콘은 font-family:swiper-icons 특수 웹폰트 글리프(::after)라 브라우저마다
+   힌팅/안티에일리어싱 방식이 달라 특정 환경에서 화살표가 뭉개져 보이는 문제가 있었다
+   (2026-09-24) — ::after 를 죽이고 05 매장위치(.store-nav-btn)와 동일한 Lucide 인라인 SVG
+   chevron 으로 교체해 폰트 렌더링에 기대지 않게 했다(CmsPopupModal.tsx 참고). */
 .popup-swiper .swiper-button-prev,
 .popup-swiper .swiper-button-next {
   width: 32px;
@@ -2478,6 +2482,9 @@ textarea {
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.35);
   color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: background-color 0.15s ease;
 }
 .popup-swiper .swiper-button-prev:hover,
@@ -2486,8 +2493,15 @@ textarea {
 }
 .popup-swiper .swiper-button-prev::after,
 .popup-swiper .swiper-button-next::after {
-  font-size: 14px;
-  font-weight: 700;
+  content: none;
+}
+.popup-swiper .swiper-button-prev svg,
+.popup-swiper .swiper-button-next svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
 }
 .popup-swiper .swiper-button-prev {
   left: 12px;
@@ -2598,9 +2612,10 @@ textarea {
     height: 28px;
     margin-top: -14px;
   }
-  .popup-swiper .swiper-button-prev::after,
-  .popup-swiper .swiper-button-next::after {
-    font-size: 12px;
+  .popup-swiper .swiper-button-prev svg,
+  .popup-swiper .swiper-button-next svg {
+    width: 14px;
+    height: 14px;
   }
   .popup-title {
     padding: 18px 20px 8px;
