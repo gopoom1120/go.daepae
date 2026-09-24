@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+@docs/TECH-STACK-PRIORITY.md
+
 ---
 
 # 고품격대패 — 프랜차이즈 창업 랜딩페이지 (시안A_v2)
