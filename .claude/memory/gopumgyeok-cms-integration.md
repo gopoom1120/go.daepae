@@ -10,6 +10,13 @@ metadata:
 1곳 + 인터랙션 8곳" 서술이 이제 부정확하고(파일이 3개로 나뉨), 팝업 기능 자체가 CLAUDE.md에
 전혀 언급이 없다. 다음에 CLAUDE.md를 갱신할 일이 생기면 이 내용도 함께 반영할 것.
 
+**2026-09-24 갱신**: 아래에서 언급하는 `assets/js/{dataFetch,regexr,script}.js`와 `index.html`
+자체가 **정적 사이트 전체 삭제로 더 이상 존재하지 않는다**([[gopumgyeok-nextjs-migration]]
+참고). 이 로직은 이미 Next.js로 포팅되어 있다 — `dataFetch.js`→`src/libs/api.ts`,
+`regexr.js`→`src/libs/format.ts`, `script.js`의 렌더/인터랙션→`src/hooks/*`+
+`src/components/**`. 아래 파일 구조 설명은 "그 로직이 원래 어디서 왔는지"의 기록으로만
+유효하다.
+
 **1. 가맹문의 폼 실전송 연동** — [[gopumgyeok-open-issues]] 7번 항목이 이걸로 해소됨. 3개 폼
 (05 인라인/문의하기 Bottom Sheet/하단 고정 바) 모두 `submitInquiry()`(`script.js`)가
 `dataFetch('/franchise-inquiries', {method:'POST', body:...})`로 실제 전송한다. 성공 시

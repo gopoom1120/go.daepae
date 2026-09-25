@@ -12,9 +12,9 @@ metadata:
 
 핵심 상태:
 - 5섹션 구조(경쟁력/메뉴/수익분석/창업비용/매장위치) + 히어로.
-- **2026-09-22부터 정적 HTML/CSS/JS 버전과 Next.js 버전이 저장소 루트에 공존한다** — 정적
-  사이트(`index.html`/`assets/`/`data/`)는 삭제되지 않고 그대로 있고, 그 옆에 Next.js 14 App
-  Router 프로젝트(`src/`, `package.json`)가 새로 생겼다. 자세한 내용은
+- **2026-09-22 Next.js 14 App Router 프로젝트(`src/`, `package.json`)가 저장소 루트에
+  생겼고, 2026-09-24 구 정적 사이트(`index.html`/`assets/`/`data/`)가 완전히 삭제됐다** —
+  한동안 두 버전이 공존했지만 지금은 Next.js가 유일한 소스다. 자세한 내용은
   [[gopumgyeok-nextjs-migration]] 참고.
 - 최종 프로덕션 방향은 **Next.js + Supabase**(문의폼 실제 연동, 관리자모드, 도메인/호스팅까지가
   계약 범위) — Next.js 전환은 시작됐고, Supabase는 별도 저장소 `go.daepae.cms.api`(백오피스)

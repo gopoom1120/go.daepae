@@ -1,6 +1,6 @@
 ---
 name: gopumgyeok-nextjs-migration
-description: "2026-09-22, 고품격대패 랜딩이 정적 HTML에서 Next.js로 마이그레이션 시작됨 — 환경 세팅+콘텐츠 이식 완료, 기존 정적 사이트는 삭제 없이 그대로 공존 중"
+description: "고품격대패 랜딩의 Next.js 마이그레이션 — 2026-09-22 환경세팅+콘텐츠 이식, 2026-09-24 구 정적 사이트(index.html/assets/data) 완전 삭제로 Next.js가 유일한 소스가 됨"
 metadata:
   type: project
 ---
@@ -35,7 +35,13 @@ regexr}.js`의 렌더링·인터랙션 로직을 `src/hooks/`의 커스텀 훅�
    그대로 컴포넌트 경계만 씌웠다.
 3. **에셋/데이터는 이동이 아니라 복사** — `assets/imgs`→`public/assets/imgs`, `assets/fonts`→
    `public/assets/fonts`, `data/content.json`→`src/data/content.json`(이미지 경로에 선행
-   슬래시만 추가). 기존 정적 사이트가 그대로 배포 가능한 상태를 유지하기 위함.
+   슬래시만 추가). 당시엔 기존 정적 사이트를 그대로 배포 가능한 상태로 유지하기 위한 선택이었으나,
+   **2026-09-24에 원본 `index.html`/`assets/`/`data/`(87개 파일)가 완전히 삭제됐다** — 사용자가
+   "이전에 작업했던 정적인 파일은 모두 삭제해줘"라고 명시적으로 요청. `public/assets/*`와
+   `src/data/content.json`에 이미 동일 내용이 복사돼 있었기 때문에 Next.js 앱 동작에는 영향
+   없었다(빌드/lint 통과 확인). **이제 이 저장소에 정적 사이트 버전은 존재하지 않는다** — Next.js가
+   유일한 소스. GitHub Pages 배포 워크플로(`.github/workflows/static.yml`)도 이미 존재하지
+   않는 상태였다(CLAUDE.md는 아직 있다고 서술하지만 실제로는 없다).
 4. **CMS API 연동은 실제로 살아있다** — [[gopumgyeok-cms-integration]]에서 이미 확인된 대로
    문의폼 3곳이 진짜로 `franchise-inquiries`에 POST하고 팝업도 실제 fetch한다. Next.js 버전에서도
    동일 로직을 `src/libs/api.ts`로 포팅했고, 하드코딩됐던 `CMS_API_BASE_URL`을
@@ -48,10 +54,32 @@ regexr}.js`의 렌더링·인터랙션 로직을 `src/hooks/`의 커스텀 훅�
 프로젝트"로 취급하길 원한다 — 버전 불일치나 컨벤션 차이를 최소화해 코드 공유·유지보수 부담을
 줄이려는 의도로 보인다.
 
-**How to apply**: 다음 세션에서 이어질 가능성이 높은 후속 작업:
-- 기존 정적 사이트(`index.html`)를 언제/어떻게 은퇴시킬지(삭제 vs 그대로 아카이브) 아직 결정 안 됨
-- 배포 방식 전환(GitHub Pages 정적 배포 → Next.js를 위한 Vercel/Node 호스팅) 필요
-- 배포 전 `NEXT_PUBLIC_CMS_API_BASE_URL`을 프로덕션 도메인으로 교체해야 함
+**2026-09-24 후속 작업 두 가지**:
+- CMS 팝업 모달(`CmsPopupModal.tsx`)의 좌우 화살표를 Swiper 기본 폰트 아이콘(`swiper-icons`
+  `::after`)에서 05 매장위치와 동일한 Lucide 인라인 SVG chevron으로 교체하고, 상단 X 닫기
+  버튼을 제거했다(배경 클릭/ESC/하단 "닫기" 버튼으로는 여전히 닫힘). **작업 중 사용자가 명시
+  교정**: "assets/css 수정하지 말고, src/styles 기반 Next.js 코드에서 수정해줘" — 그 시점엔
+  정적 사이트가 아직 존재해서 `assets/css/style.css`를 먼저 고쳤다가 되돌리고
+  `src/styles/legacy/style.css` + 컴포넌트 쪽으로 다시 작업했다. **정적 사이트가 삭제된 지금은
+  이 구분 자체가 무의미해졌다** — 수정 대상은 이제 `src/` 하나뿐이다.
+- 재사용을 위해 `docs/TECH-STACK-PRIORITY.md`(범용 기술스택 선택 우선순위 체크리스트)를
+  작성하고 `CLAUDE.md`에 `@docs/TECH-STACK-PRIORITY.md`로 import했다. 다른 프로젝트에 이식할
+  때는 "전역 1벌 참조" 대신 **프로젝트마다 파일을 복사하고 그 프로젝트의 CLAUDE.md에 동일하게
+  `@경로` import 한 줄을 추가하는 방식**을 사용자가 선택했다(이견 없이 확정) — 프로젝트별로
+  독립적으로 커스터마이징할 여지를 남기는 쪽을 선호하는 것으로 보인다.
+
+**남은 후속 작업**:
+- **배포**: 로컬에는 `.vercel/` 프로젝트 링크도 `vercel` CLI도 없지만, 사용자는 "GitHub에
+  커밋/푸시만 하면 Vercel이 CI/CD로 자동 배포한다"고 확인했다(Vercel 대시보드 쪽 Git 연동으로
+  추정, 저장소 안에서는 그 연결을 코드로 확인할 방법이 없다). **앞으로 "배포해줘" 요청은 별도
+  배포 명령 없이 `main`에 push(이미 push돼 있으면 그걸로 끝)까지만 하면 된다** — `vercel --prod`
+  같은 CLI 배포를 시도할 필요 없음.
+- 배포 전 `NEXT_PUBLIC_CMS_API_BASE_URL`을 프로덕션 도메인으로 교체해야 함. **그런데 CMS
+  백엔드(`go.daepae.cms.api`)도 아직 배포된 적이 없다**(그쪽 저장소에 `vercel.json`은 있지만
+  `.vercel/` 링크 없음, 2026-09-24 확인) — 프론트만 먼저 배포해도 프로덕션에서 문의폼/팝업은
+  `localhost:3001`을 바라보다 실패한다. CMS 백엔드 배포가 선행돼야 프론트의 env 값을 확정할 수
+  있다.
 - **CLAUDE.md는 이 Next.js 마이그레이션을 전혀 반영하지 않은 상태다** — "빌드 도구 없이 동작하는
-  단일 페이지 랜딩"이라는 현재 서술이 이제 부정확하다. CLAUDE.md를 다음에 갱신할 일이 생기면 이
-  내용도 함께 반영할 것.
+  단일 페이지 랜딩"이라는 서술도, `index.html`/`assets/`/`data/` 아키텍처 설명도 이제 전부
+  부정확하다(그 파일들 자체가 삭제됐다). CLAUDE.md를 다음에 갱신할 일이 생기면 Next.js 구조
+  기준으로 다시 쓸 것.
