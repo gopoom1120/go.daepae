@@ -88,28 +88,92 @@
       "name": "상추"
     },
     {
-      "image": "/assets/imgs/sb_romaine.jpg",
+      "image": "/assets/imgs/sb_romaine.png",
       "name": "로메인"
     },
     {
-      "image": "/assets/imgs/sb_kkaennip.jpg",
+      "image": "/assets/imgs/sb_kkaennip.png",
       "name": "깻잎"
     },
     {
-      "image": "/assets/imgs/sb_kale.jpg",
+      "image": "/assets/imgs/sb_kale.png",
       "name": "케일"
+    },
+    {
+      "image": "/assets/imgs/sb_ssamchu.png",
+      "name": "쌈추"
+    },
+    {
+      "image": "/assets/imgs/sb_jeokgeoja.png",
+      "name": "적겨자"
+    },
+    {
+      "image": "/assets/imgs/sb_jeokgeundae.png",
+      "name": "적근대"
+    },
+    {
+      "image": "/assets/imgs/sb_gosari.png",
+      "name": "고사리"
+    },
+    {
+      "image": "/assets/imgs/sb_pachae.png",
+      "name": "파채"
+    },
+    {
+      "image": "/assets/imgs/sb_yangpa.png",
+      "name": "양파"
+    },
+    {
+      "image": "/assets/imgs/sb_tomato.png",
+      "name": "토마토"
     },
     {
       "image": "/assets/imgs/sb_goguma.png",
       "name": "고구마"
     },
     {
-      "image": "/assets/imgs/sb_yeongeun.jpg",
+      "image": "/assets/imgs/sb_gamja.png",
+      "name": "감자"
+    },
+    {
+      "image": "/assets/imgs/sb_danhobak.png",
+      "name": "단호박"
+    },
+    {
+      "image": "/assets/imgs/sb_yeongeun.png",
       "name": "연근"
     },
     {
       "image": "/assets/imgs/sb_kongnamul.png",
       "name": "콩나물"
+    },
+    {
+      "image": "/assets/imgs/sb_saesongi.png",
+      "name": "새송이버섯"
+    },
+    {
+      "image": "/assets/imgs/sb_paengibeoseot.png",
+      "name": "팽이버섯"
+    },
+    {
+      "image": "/assets/imgs/sb_ssammu.png",
+      "name": "쌈무"
+    },
+    {
+      "image": "/assets/imgs/sb_konmayo.png",
+      "name": "콘마요"
+    },
+    {
+      "image": "/assets/imgs/sb_tteok.png",
+      "name": "떡"
+    },
+    {
+      "image": "/assets/imgs/sb_mandu.png",
+      "name": "만두"
+    },
+    {
+      "image": "/assets/imgs/sb_sundae.png",
+      "name": "순대"
     }
   ],
   "profit": [

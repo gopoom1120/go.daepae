@@ -9,3 +9,4 @@
 - [큰 프로그래매틱 스크롤 후 스크린샷 블랙프레임](headless-large-scroll-screenshot-black-frame.md) — ~5500px 점프+--screenshot 조합이 검정 프레임을 냄, dump-dom은 안전. 클래스 직접 주입 우회법 포함
 - [포트 8765를 형제 프로젝트와 공유](gopumgyeok-shared-port-8765-with-sibling-project.md) — 0007-B 등 다른 서버가 먼저 bind하면 200이 와도 엉뚱한 프로젝트 HTML이 찍힘, curl로 콘텐츠 확인 필수
 - [셀프바 원형 이미지 링 두께 픽셀 스캔 검증법](gopumgyeok-selfbar-ring-pixel-scan-technique.md) — 흰 여백은 CSS 링이 아니라 jpg에 구운 것, PIL 스캔라인으로 순백 구간 px 측정해야 육안 오판 방지
+- [Next.js 이식 후 IO 리빌 검증용 임시 라우트 기법](gopumgyeok-nextjs-migration-debug-route-technique.md) — 정적 사이트 삭제되고 Next.js(포트 3000)로 이식됨, `_debug_full.html` 대신 언더스코어 없는 임시 app 라우트로 우회

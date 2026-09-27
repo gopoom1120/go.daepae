@@ -879,6 +879,7 @@ section {
   aspect-ratio: 1;
   border-radius: 50%;
   overflow: hidden;
+  background: var(--bg-card);
   border: 1px solid var(--line);
   transition:
     border-color 0.3s ease,
@@ -906,28 +907,28 @@ section {
 .sb-item.in-view {
   animation: compCardReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-.sb-item.in-view:nth-child(1) {
+.sb-item.in-view:nth-child(8n + 1) {
   animation-delay: 0s;
 }
-.sb-item.in-view:nth-child(2) {
+.sb-item.in-view:nth-child(8n + 2) {
   animation-delay: 0.06s;
 }
-.sb-item.in-view:nth-child(3) {
+.sb-item.in-view:nth-child(8n + 3) {
   animation-delay: 0.12s;
 }
-.sb-item.in-view:nth-child(4) {
+.sb-item.in-view:nth-child(8n + 4) {
   animation-delay: 0.18s;
 }
-.sb-item.in-view:nth-child(5) {
+.sb-item.in-view:nth-child(8n + 5) {
   animation-delay: 0.24s;
 }
-.sb-item.in-view:nth-child(6) {
+.sb-item.in-view:nth-child(8n + 6) {
   animation-delay: 0.3s;
 }
-.sb-item.in-view:nth-child(7) {
+.sb-item.in-view:nth-child(8n + 7) {
   animation-delay: 0.36s;
 }
-.sb-item.in-view:nth-child(8) {
+.sb-item.in-view:nth-child(8n + 8) {
   animation-delay: 0.42s;
 }
 @media (max-width: 1024px) {
