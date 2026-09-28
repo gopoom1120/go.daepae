@@ -74,11 +74,10 @@ regexr}.js`의 렌더링·인터랙션 로직을 `src/hooks/`의 커스텀 훅�
   추정, 저장소 안에서는 그 연결을 코드로 확인할 방법이 없다). **앞으로 "배포해줘" 요청은 별도
   배포 명령 없이 `main`에 push(이미 push돼 있으면 그걸로 끝)까지만 하면 된다** — `vercel --prod`
   같은 CLI 배포를 시도할 필요 없음.
-- 배포 전 `NEXT_PUBLIC_CMS_API_BASE_URL`을 프로덕션 도메인으로 교체해야 함. **그런데 CMS
-  백엔드(`go.daepae.cms.api`)도 아직 배포된 적이 없다**(그쪽 저장소에 `vercel.json`은 있지만
-  `.vercel/` 링크 없음, 2026-09-24 확인) — 프론트만 먼저 배포해도 프로덕션에서 문의폼/팝업은
-  `localhost:3001`을 바라보다 실패한다. CMS 백엔드 배포가 선행돼야 프론트의 env 값을 확정할 수
-  있다.
+- ~~CMS 백엔드 미배포~~ — **2026-09-28 확인됨: 이미 해소.** `go.daepae.cms.api`가
+  `go-daepae-cms-api.vercel.app`으로 배포돼 있고, 랜딩 프로덕션 `.env`의
+  `NEXT_PUBLIC_CMS_API_BASE_URL`도 그 주소로 설정돼 있다. 다만 실도메인에서의 CORS 화이트리스트
+  누락 문제가 있었다 — [[gopumgyeok-cms-api-cors]] 참고.
 - **CLAUDE.md는 이 Next.js 마이그레이션을 전혀 반영하지 않은 상태다** — "빌드 도구 없이 동작하는
   단일 페이지 랜딩"이라는 서술도, `index.html`/`assets/`/`data/` 아키텍처 설명도 이제 전부
   부정확하다(그 파일들 자체가 삭제됐다). CLAUDE.md를 다음에 갱신할 일이 생기면 Next.js 구조

@@ -1,6 +1,6 @@
 ---
 name: gopumgyeok-open-issues
-description: "고품격대패 랜딩의 미해결 항목과 다음 단계 — 창업비용 금액 미확보, 시안 컨펌 대기, CMS 백엔드 미배포. 2026-09-24 정적 사이트 완전 삭제로 Next.js가 유일한 소스"
+description: "고품격대패 랜딩의 미해결 항목과 다음 단계 — 창업비용 금액 미확보, 시안 컨펌 대기. 2026-09-24 정적 사이트 완전 삭제로 Next.js가 유일한 소스. 2026-09-28 CMS 백엔드 배포+실서버 CORS 확정"
 metadata: 
   node_type: memory
   type: project
@@ -25,12 +25,11 @@ Next.js 쪽 동급 경로(`src/data/content.json`, `src/styles/legacy/style.css`
 8. **이미지 저해상도** — 카탈로그 PDF 크롭 원본은 프로덕션에선 클라이언트 고해상도 원본으로 교체하는 게 좋다([[gopumgyeok-brand-data]]). 지금은 `public/assets/imgs/`에 있다. 단, 메뉴 9종과 셀프바 24종은 더 이상 이 얘기가 아니다 — 아래 9번 참고.
 9. **02 메뉴/셀프바 png 이미지가 전부 무압축 상태** — `meat_*.png`(나무 테이블 스타일) 개당 2.2~2.4MB, 9종 총합 약 20MB. **2026-09-27, 셀프바 `sb_*.png` 24종(투명 배경, 개당 약 1~1.4MB, 총 24~30MB)도 같은 상태로 추가됐다** — 원래 쓰던 `sb_*.jpg`(180×180, 개당 5~10KB) 24개는 세션 도중 디스크에서 사라지고 png만 남아 있었다(이 세션이 지운 게 아님, git 히스토리에만 원본 존재). 리사이즈·압축을 아직 안 거쳤다. asset-optimizer로 두 세트(메뉴+셀프바) 모두 점검 필요. 자세한 경위는 [[gopumgyeok-brand-data]] 참고.
 12. **CLAUDE.md "알려진 이슈 2"(셀프바 이미지 16장 미사용, "의도된 여분")가 2026-09-27부로 사실이 아니다** — 사용자 요청으로 셀프바를 8종 노출에서 24종(카탈로그상 "25종 이상") 전체 노출로 확장했다. CLAUDE.md를 다음에 갱신할 때 이 항목을 제거하거나 "24종 전체 노출로 확정"으로 바꿀 것.
-10. **`NEXT_PUBLIC_CMS_API_BASE_URL`이 아직 `http://localhost:3001/api/v1`(로컬 전용)이다**
-    (`.env.local`). **CMS 백엔드(`go.daepae.cms.api`) 자체도 2026-09-24 기준 아직 어디에도
-    배포되지 않았다**(그쪽 저장소에 `vercel.json`은 있지만 `.vercel/` 프로젝트 링크 없음) — 백엔드
-    배포가 선행돼야 이 값을 프로덕션 도메인으로 확정할 수 있다. 안 바꾸면 배포된 랜딩에서 문의
-    제출/팝업 조회가 전부 실패한다. 자세한 내용은 [[gopumgyeok-cms-integration]],
-    [[gopumgyeok-nextjs-migration]] 참고.
+10. ~~`NEXT_PUBLIC_CMS_API_BASE_URL`이 로컬 전용이고 CMS 백엔드가 미배포~~ — **2026-09-28
+    해소 확인됨.** CMS 백엔드(`go.daepae.cms.api`)는 이미 `go-daepae-cms-api.vercel.app`으로
+    배포돼 실제 데이터를 반환 중이고, 랜딩 프로덕션(`.env`)의 `NEXT_PUBLIC_CMS_API_BASE_URL`도
+    그 주소를 가리키고 있다. 다만 실서버 도메인(`https://xn--i89a2dz9q2p1bhpb.com`)에서의 팝업
+    조회가 CORS로 막혀 있었던 걸 이번에 고쳤다 — 자세한 내용은 [[gopumgyeok-cms-api-cors]] 참고.
 11. **CLAUDE.md가 Next.js 마이그레이션과 정적 사이트 삭제를 전혀 반영하지 않은 상태(2026-09-24
     기준)** — `index.html`/`assets/` 아키텍처를 기준으로 서술돼 있는데 그 파일들 자체가 이제
     없다. 다음에 CLAUDE.md를 갱신할 일이 생기면 Next.js 구조 기준으로 다시 쓸 것.
