@@ -16,5 +16,5 @@
 - [빠른 반복 디자인 요청 대응](feedback_rapid-iteration-design-requests.md) — 짧은 연속 요청으로 한 요소를 여러 번 재디자인할 때: 기존 keyframe 이름 재사용, 단순함으로 수렴하는 경향, 국소 변경엔 풀 검증 생략
 - [CSS 전역vs로컬 스코프 특이성 함정](feedback_css-specificity-scoped-vs-global.md) — 05 폼은 전역 label/input 셀렉터, 문의 모달은 같은 태그를 로컬 재스코프 — 공용 컴포넌트는 속성 전부를 다시 선언해야 한다
 - [CMS 백오피스 연동 완료](gopumgyeok-cms-integration.md) — 2026-09-17, 문의폼 실전송+팝업 신규 구현, script.js가 dataFetch.js/regexr.js로 분리(CLAUDE.md 미반영 주의)
-- [Next.js 마이그레이션](gopumgyeok-nextjs-migration.md) — 2026-09-22 세팅+이식, 2026-09-24 구 정적 사이트 완전 삭제(Next.js만 남음), Vercel Git 자동배포 확인
+- [Next.js 마이그레이션](gopumgyeok-nextjs-migration.md) — 2026-09-22 세팅+이식, 2026-09-24 구 정적 사이트 완전 삭제(Next.js만 남음), Vercel Git 자동배포 확인, metadataBase는 dev 서버로 검증 불가, 일부 섹션 카피는 content.json 아닌 JSX 하드코딩(2026-10-01)
 - [CMS API CORS 화이트리스트](gopumgyeok-cms-api-cors.md) — 실서버 도메인(랜딩/admin 서브도메인) 확정값, curl은 정상인데 브라우저만 막히는 CORS 함정, 2026-09-28 ALLOWED_ORIGINS 수정

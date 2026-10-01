@@ -23,7 +23,7 @@ export function Menu({ meat, selfbar }: MenuProps) {
           <h2>
             고기 종류 <span className="h2-accent accent-impact">9가지</span>
           </h2>
-          <p>모듬 한판부터 ++꽃등심 대패까지, 다양한 부위를 대패 방식으로 즐길 수 있습니다.</p>
+          <p>돼지고기 소고기 오리고기 등 다양한 부위를 대패로 즐길 수 있습니다.</p>
         </div>
         <div className="meat-grid" id="meatGrid" ref={meatRef}>
           {meat.map((item) => (
@@ -38,9 +38,7 @@ export function Menu({ meat, selfbar }: MenuProps) {
 
         <div className="selfbar-note">
           <b>셀프바 25종 이상</b>
-          <span>
-            상차림이 제공되지 않아 고객이 직접 셀프바를 이용합니다 · 상권에 맞게 일부 변경 가능
-          </span>
+          <span>단돈 2000원으로 즐기는 나만의 상차림 (상권에 따라 일부 셀프바 변경 가능)</span>
         </div>
         <div className="selfbar-grid" id="selfbarGrid" ref={selfbarRef}>
           {selfbar.map((item) => (

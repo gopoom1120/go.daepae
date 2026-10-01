@@ -82,3 +82,24 @@ regexr}.js`의 렌더링·인터랙션 로직을 `src/hooks/`의 커스텀 훅�
   단일 페이지 랜딩"이라는 서술도, `index.html`/`assets/`/`data/` 아키텍처 설명도 이제 전부
   부정확하다(그 파일들 자체가 삭제됐다). CLAUDE.md를 다음에 갱신할 일이 생기면 Next.js 구조
   기준으로 다시 쓸 것.
+
+**2026-09-28 — `metadataBase`(OG/카카오 공유 태그) 검증 시 dev 서버를 믿으면 안 된다**:
+`layout.tsx`에 `metadataBase`를 프로덕션 도메인(`https://xn--i89a2dz9q2p1bhpb.com`)으로 설정해도,
+`yarn dev`로 띄운 상태에서 `curl`로 `<meta property="og:image">`를 확인하면 **항상
+`http://localhost:3000/...`로 나온다** — Next.js가 개발 편의상 절대 URL을 요청 origin으로
+덮어쓰기 때문이며 버그가 아니다. `metadataBase`가 실제로 반영됐는지는 반드시 `yarn build &&
+yarn start` 후에 확인해야 한다(이번 세션에서 dev/build 두 번 다 찍어서 차이를 직접 확인함).
+**How to apply**: 앞으로 OG/트위터카드 등 절대 URL이 필요한 메타데이터를 검증할 땐 dev 서버
+출력만 보고 "안 됐다"고 판단하지 말 것 — 프로덕션 빌드로 한 번 더 확인한다.
+
+**2026-10-01 — 일부 문구는 `content.json`이 아니라 컴포넌트 JSX에 하드코딩돼 있다**: 구 정적
+사이트 시절 CLAUDE.md의 "문구나 이미지를 바꿀 일이 생기면 거의 항상 JSON만 고치면 된다" 원칙이
+Next.js 이식 후에는 더 이상 전역적으로 맞지 않는다. 예를 들어 `src/components/sections/
+Menu.tsx`의 "고기 종류 9가지" 섹션 소개 문구(`<p>`)와 셀프바 안내 문구(`<span>`)는
+`src/data/content.json`을 거치지 않고 JSX에 직접 한국어 문자열로 박혀 있다 — 반면 같은
+컴포넌트 안 고기 9종/셀프바 카드 이름(`meat[].name`)은 여전히 `content.json`에서 온다. 즉 한
+컴포넌트 안에서도 "카드 데이터"는 JSON, "섹션 설명 카피"는 하드코딩이 섞여 있다.
+**How to apply**: 사용자가 화면 문구 수정을 요청하면 `content.json`을 먼저 grep 하되, 못 찾으면
+바로 "없는 문구"로 단정하지 말고 관련 컴포넌트(`src/components/sections/*.tsx`)도 grep해서
+하드코딩 여부를 확인한다. content-editor 에이전트에게 위임할 때도 이 전제(JSON만 보면 못 찾는
+문구가 있을 수 있음)를 알려줄 것.
