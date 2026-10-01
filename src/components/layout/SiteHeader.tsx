@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Menu, X } from "lucide-react";
 import { scrollToSection } from "@/libs/scroll";
 import { openInquirySheet } from "@/hooks/useInquirySheetTrigger";
 
@@ -78,12 +79,10 @@ export function SiteHeader() {
         type="button"
         className="nav-toggle"
         id="navToggle"
-        aria-label="메뉴 열기"
+        aria-label={navOpen ? "메뉴 닫기" : "메뉴 열기"}
         onClick={() => setNavOpen((o) => !o)}
       >
-        <span></span>
-        <span></span>
-        <span></span>
+        {navOpen ? <X /> : <Menu />}
       </button>
     </header>
   );
