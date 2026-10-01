@@ -179,24 +179,24 @@
   "profit": [
     {
       "name": "왕십리 본점",
-      "open": "2024. 11. 27 오픈",
-      "salesWon": 47000000,
+      "image": "/assets/imgs/store1.jpg",
       "rate": 36.1,
-      "tall": false
+      "salesManWon": 4700,
+      "cost": { "food": 8.2, "meat": 14.4, "labor": 22.7, "utilities": 14.4, "drink": 2.1, "alcohol": 2.1 }
     },
     {
       "name": "천호 직영점",
-      "open": "2025. 03. 04 오픈",
-      "salesWon": 67000000,
+      "image": "/assets/imgs/store2.jpg",
       "rate": 40.2,
-      "tall": true
+      "salesManWon": 6700,
+      "cost": { "food": 9.3, "meat": 16.5, "labor": 17.5, "utilities": 12.4, "drink": 2.05, "alcohol": 2.05 }
     },
     {
       "name": "시흥 은계점",
-      "open": "2026. 01. 28 오픈",
-      "salesWon": 39000000,
+      "image": "/assets/imgs/store3.jpg",
       "rate": 33.3,
-      "tall": false
+      "salesManWon": 3900,
+      "cost": { "food": 9.4, "meat": 14.5, "labor": 17.7, "utilities": 20.8, "drink": 2.15, "alcohol": 2.15 }
     }
   ],
   "cost": {

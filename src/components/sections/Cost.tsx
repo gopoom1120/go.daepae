@@ -14,13 +14,14 @@ export function Cost({ cost }: CostProps) {
         <div className="section-head">
           <div className="kicker">04 · FRANCHISE COST</div>
           <h2>
-            투명하게 안내하는
+            <span className="cost-title-line1">점주들의 의한 고품격 이벤트</span>
             <br />
-            <span className="h2-accent accent-impact">창업 준비 항목</span>
+            <span className="h2-accent accent-impact">7호점까지!!</span>
           </h2>
           <p>
-            정확한 창업비용은 상권·평수·업종변경 여부에 따라 달라지므로, 상담을 통해 정확히
-            안내드립니다.
+            가맹비 전액 무료
+            <br />
+            전수창업으로 인한 마진률 극대화 기회
           </p>
         </div>
         <div className="cost-table" id="costTable">

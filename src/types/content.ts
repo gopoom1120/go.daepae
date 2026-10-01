@@ -25,12 +25,21 @@ export interface SelfbarItem {
   name: string;
 }
 
+export interface ProfitCostBreakdown {
+  food: number;
+  meat: number;
+  labor: number;
+  utilities: number;
+  drink: number;
+  alcohol: number;
+}
+
 export interface ProfitItem {
   name: string;
-  open: string;
-  salesWon: number;
+  image: string;
   rate: number;
-  tall: boolean;
+  salesManWon: number;
+  cost: ProfitCostBreakdown;
 }
 
 export interface CostRow {

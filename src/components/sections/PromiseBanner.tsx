@@ -6,7 +6,7 @@ export function PromiseBanner() {
       <div className="promise-inner wrap">
         <div className="kicker">START FRANCHISE</div>
         <h2 className="promise-line">
-          지금 시작하는 창업,
+          성공의 시작을
           <br />
           <em className="accent-impact">고품격대패가 함께합니다</em>
         </h2>

@@ -978,7 +978,7 @@ section {
 }
 .review-item:nth-child(2) {
   margin-top: -28px;
-} /* 가운데 폰을 살짝 띄워 03 수익분석 영수증 열과 같은 지그재그 리듬(.receipt-col.center) */
+} /* 가운데 폰을 살짝 띄워 지그재그 리듬을 준다 */
 
 /* 배지와 폰 사이 여백 — 겹치게(음수 margin) 했더니 배지가 카메라 노치를 가려 2026-09-08 다시 띄웠다. */
 .review-badge {
@@ -1124,195 +1124,180 @@ section {
   opacity: 0.8;
 }
 
-.receipt-track {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
+/* PROFIT — 매장 사진 + 비용 항목 파이 차트. 2026-10 영수증 롤 디자인을 전면 교체했다.
+   색상은 :root 11개 토큰만 사용한다(새 hex 리터럴 추가하지 않음). */
+.profit-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 28px;
   margin-top: 8px;
-  flex-wrap: wrap;
 }
-.receipt-col {
-  flex: 1 1 280px;
-  max-width: 330px;
+.profit-card {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.receipt-col.center {
-  margin-top: -22px;
+.profit-card__tag {
+  width: 100%;
+  padding: 14px 20px;
+  margin-bottom: 14px;
+  background: var(--gold);
+  color: var(--bg-card-2);
+  /* 2026-10, 사용자 요청으로 섹션 타이틀 전용이던 RixYeoljeongdo 를 매장명 태그에도 확장했다
+     — 디스플레이체라 font-weight 는 다른 RixYeoljeongdo 사용처와 동일하게 400 을 쓴다(800을
+     주면 브라우저가 가짜로 두껍게 합성한다). */
+  font-family: "RixYeoljeongdo", "Pretendard", sans-serif;
+  font-weight: 400;
+  font-size: 20px;
+  text-align: center;
+  border-radius: 14px;
 }
-
-.printer-bar {
+.profit-card__photo {
   position: relative;
   width: 100%;
-  height: 34px;
-  flex-shrink: 0;
-  border-radius: 999px;
-  background: linear-gradient(
-    180deg,
-    #f2f1ee 0%,
-    #d8d6d0 25%,
-    #8b8883 55%,
-    #b5b2ac 80%,
-    #77746e 100%
-  );
-  box-shadow:
-    0 10px 18px rgba(0, 0, 0, 0.5),
-    0 0 0 3px rgba(166, 41, 31, 0.3),
-    inset 0 2px 2px rgba(255, 255, 255, 0.75),
-    inset 0 -3px 4px rgba(0, 0, 0, 0.35);
-  z-index: 3;
+  /* 원본 store1~3.jpg(540x25, 2.16:1)는 좌우에 여백이 포함되어 있어 원본 비율 그대로
+     쓰면 여백까지 그대로 보인다. object-fit:cover 가 여백을 크롭해내도록 더 좁은
+     비율(3:2)을 쓴다. */
+  aspect-ratio: 3 / 2;
+  border-radius: 20px; /* .store-card 와 동일한 포토 카드 라운드 예외 재사용 */
+  overflow: hidden;
+  border: 1px solid var(--line);
 }
-.printer-slot {
-  position: absolute;
-  left: 9%;
-  right: 9%;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 11px;
-  border-radius: 3px;
-  background: #0a0a0a;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.9);
-}
-/* margin-top 은 바 높이(34px)의 절반보다 크게 잡아 종이 윗변이 슬롯 선에 물리게 한다. */
-.receipt-mask {
-  position: relative;
-  z-index: 3; /* 바와 같은 z-index + DOM 상 뒤 → 종이가 바 앞으로 나온다 */
-  /* 폭은 슬롯(.printer-slot: 바 기준 left/right 9%)과 정확히 같은 82%.
-     종이가 슬롯 구멍에서 그대로 빠져나오는 것처럼 보이게 하려면 두 값을 함께 움직일 것. */
-  width: 82%;
-  margin-top: -19px;
-  /* 높이는 항상 실제 콘텐츠 높이(auto)로 고정한다 — max-height 를 0↔실측값으로 움직이면
-     이 박스의 문서 흐름 높이 자체가 바뀌어 03 수익분석 섹션 전체 높이가 펼쳐짐/접힘마다
-     출렁인다(2026-09-03 수정). clip-path 로 "보이는 영역"만 위→아래로 드러내면 레이아웃
-     높이는 처음부터 고정되고, 슬롯에서 슬라이스되어 나오는 시각 효과는 그대로 유지된다. */
-  clip-path: inset(0 0 100% 0);
-  transition: clip-path 1s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0ms);
-}
-.receipt-col.in-view .receipt-mask {
-  clip-path: inset(0 0 0% 0);
-}
-
-/* 페이드 인/아웃은 제거했다(2026-09-01) — 종이는 항상 불투명하고, 슬롯에서 밀려 나오는
-   .receipt-mask 의 clip-path 만으로 움직인다. drop-shadow 는 여기(wrapper)에 유지할 것. */
-.receipt-body {
-  filter: drop-shadow(0 16px 20px rgba(0, 0, 0, 0.45));
-}
-
-.receipt-paper {
-  position: relative;
-  z-index: 1;
+.profit-card__photo img {
   width: 100%;
-  container-type: inline-size; /* 아래 cqw 단위의 기준 — 글자를 뷰포트가 아니라 종이 폭에 맞춘다 */
-  background: #f6f1e4;
-  color: #221e17;
-  padding: 40px 26px 26px;
-  border-radius: 2px 2px 0 0;
+  height: 100%;
+  object-fit: cover;
 }
-.receipt-scallop {
+.profit-badges {
   width: 100%;
-  height: 12px;
-  background: #f6f1e4;
-  -webkit-mask-image: radial-gradient(circle 10px at 7px 0, #000 10px, transparent 10.3px);
-  mask-image: radial-gradient(circle 10px at 7px 0, #000 10px, transparent 10.3px);
-  -webkit-mask-size: 14px 12px;
-  mask-size: 14px 12px;
-  -webkit-mask-repeat: repeat-x;
-  mask-repeat: repeat-x;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 18px;
 }
-
-.r-label {
+.profit-badge {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 20px;
+  /* 레퍼런스 이미지의 웜베이지 배지 배경 — 11개 토큰 중에는 없는 색이라 영수증 종이(#F6F1E4)와
+     같은 방식으로 이 배지에 한정해 리터럴 hex 를 쓴다. */
+  background: #ebe0d1;
+  color: var(--muted);
+  font-family: "RixYeoljeongdo", "Pretendard", sans-serif;
   font-size: 18px;
-  color: #8b8272;
-  letter-spacing: 0.04em;
-  text-align: center;
-  padding-bottom: 20px;
-  margin-bottom: 22px;
-  border-bottom: 4px dotted #c9bfa5;
-  font-weight: 600;
+  font-weight: 400;
+  border-radius: 2px;
 }
-/* 폰트 크기는 종이 폭(cqw) 기준. vw 로 두면 종이 폭(컬럼의 82%)과 연동되지 않아
-   매출 숫자가 좌우로 잘린다. 앞줄 vw 값은 컨테이너 쿼리 미지원 브라우저용 폴백. */
-.r-store {
-  font-size: clamp(22px, 2.8vw, 40px);
-  font-size: clamp(22px, 18cqw, 42px);
-  font-weight: 900;
-  text-align: center;
-  margin-bottom: 18px;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-  word-break: keep-all;
-}
-/* "39,000,000" 실측 글자폭 = 폰트 크기의 약 5.83배. 종이 안쪽폭 대비 여유를 두려면
-   16cqw(= 안쪽폭/6.25)가 상한. 이 값을 올리면 좌우가 잘린다. */
-.r-sales {
-  font-size: clamp(22px, 2.5vw, 38px);
-  font-size: clamp(22px, 16cqw, 44px);
-  font-weight: 900;
+.profit-badge b {
   color: var(--red);
+  font-size: 1.6em;
+  font-weight: 400;
+}
+.profit-connector {
+  width: 0;
+  height: 32px;
+  margin: 14px 0;
+  border-left: 2px dotted var(--text-dim);
+}
+
+/* 파이 차트 — StoreCarousel 의 .store-nav-toggle__ring 과 같은 stroke-dasharray 기법,
+   stroke-width 를 반지름만큼 굵게 줘서 중앙 구멍 없는 꽉 찬 파이로 만든다. */
+.profit-pie {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  aspect-ratio: 1;
+  container-type: inline-size; /* 아래 cqw 단위의 기준 — 오버레이 글자를 뷰포트가 아니라
+    이 파이 박스 폭에 맞춘다(.receipt-paper 의 cqw 패턴과 동일) */
+}
+.profit-pie__svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.pie-slice {
+  stroke-dasharray: 0 var(--circumference);
+  transition: stroke-dasharray 650ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i) * 90ms);
+}
+.profit-pie.in-view .pie-slice {
+  stroke-dasharray: var(--len) var(--circumference);
+}
+.profit-pie__leader {
+  /* 레퍼런스의 잉크색(#14120f) 리더선 — 색상 출처는 위 SLICE_DEFS 주석과 동일 */
+  stroke: #14120f;
+  stroke-width: 1.5;
+  opacity: 0.8;
+}
+.profit-pie__slice-label {
+  position: absolute;
+  transform: translate(-50%, -50%);
   text-align: center;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-}
-.r-divider {
-  border-top: 4px dotted #c9bfa5;
-  margin: 22px 0;
-}
-.r-sub {
   font-size: 18px;
-  color: #6b6355;
-  text-align: center;
-  margin-bottom: 20px;
-}
-.r-sub b {
-  color: #221e17;
-  font-weight: 800;
-  font-size: 1.15em;
-}
-.r-date {
-  font-size: 18px;
-  color: #54503f;
-  text-align: center;
-  margin-bottom: 20px;
   font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
 }
-.r-barcode {
-  height: 46px;
-  margin: 0 6px;
-  background-image: repeating-linear-gradient(
-    90deg,
-    #3d3934 0px,
-    #3d3934 2px,
-    transparent 2px,
-    transparent 3px,
-    #3d3934 3px,
-    #3d3934 6px,
-    transparent 6px,
-    transparent 8px,
-    #3d3934 8px,
-    #3d3934 9px,
-    transparent 9px,
-    transparent 12px
-  );
+.profit-pie__slice-label span {
+  display: block;
+}
+.profit-pie__slice-label b {
+  display: block;
+  color: inherit;
+  font-weight: 800;
+}
+.profit-pie__slice-label--left {
+  transform: translate(0, -50%);
+  text-align: left;
+}
+.profit-pie__slice-label--right {
+  transform: translate(-100%, -50%);
+  text-align: right;
+}
+.profit-pie__leader-label {
+  position: absolute;
+  transform: translate(0, -50%);
+  font-size: 18px;
+  font-weight: 600;
+  color: #14120f;
+  white-space: nowrap;
+}
+.profit-pie__overlay {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #14120f;
+  /* 레퍼런스 이미지의 두툼한 오프셋 그림자(동일 명암의 뮤트 브라운) 재현 */
+  text-shadow: 3px 4px 0 #94846b;
+  pointer-events: none;
+}
+.profit-pie__label {
+  display: block;
+  font-size: clamp(18px, 2.4vw, 22px);
+  font-size: clamp(18px, 7cqw, 22px);
+  font-weight: 700;
+}
+.profit-pie__pct {
+  display: block;
+  font-size: clamp(32px, 6vw, 72px);
+  font-size: clamp(32px, 15cqw, 52px);
+  font-weight: 900;
+  line-height: 1;
 }
 
 @media (max-width: 1024px) {
-  .receipt-track {
-    flex-direction: column;
-    align-items: center;
-    gap: 40px;
+  .profit-grid {
+    grid-template-columns: 1fr;
+    max-width: 420px;
+    margin: 0 auto;
+    gap: 56px;
   }
-  .receipt-col {
-    max-width: 400px;
-    width: 100%;
+  /* 파이 바깥 라벨(절대배치, 카드 폭을 넘어 그려질 수 있음)이 좁은 화면에서 뷰포트
+     밖으로 잘리지 않도록, 파이 자체를 카드보다 작게 줄여 라벨이 번질 여백을 둔다. */
+  .profit-pie {
+    max-width: 260px;
   }
-  .receipt-col.center {
-    margin-top: 0;
-    order: -1;
-  }
-  /* .r-store / .r-sales 의 vw 오버라이드는 제거했다 — cqw 가 종이 폭을 따라가므로
-     좁은 화면에서도 알아서 커진다. vw 로 다시 키우면 글자가 종이 밖으로 잘린다. */
 }
 
 .profit-footnote {
@@ -1396,6 +1381,14 @@ section {
   background: var(--bg);
   --text: var(--text-invert);
 } /* 어두운 배경 — section-head h2, 금액 열(마지막 span)이 밝은 글자를 쓰도록. cost-head 흰 줄은 자체 gold 색을 써서 영향 없음 */
+.cost-title-line1 {
+  white-space: nowrap; /* PC 에서 "점주들의 의한 고품격 이벤트"가 두 줄로 안 꺾이게 한다 */
+}
+@media (max-width: 1024px) {
+  .cost-title-line1 {
+    white-space: normal; /* 좁은 화면에서 nowrap 을 유지하면 뷰포트 밖으로 글자가 넘친다 */
+  }
+}
 .cost-table {
   margin-top: 8px;
   border: 1px solid var(--line);

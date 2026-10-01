@@ -10,3 +10,4 @@
 - [포트 8765를 형제 프로젝트와 공유](gopumgyeok-shared-port-8765-with-sibling-project.md) — 0007-B 등 다른 서버가 먼저 bind하면 200이 와도 엉뚱한 프로젝트 HTML이 찍힘, curl로 콘텐츠 확인 필수
 - [셀프바 원형 이미지 링 두께 픽셀 스캔 검증법](gopumgyeok-selfbar-ring-pixel-scan-technique.md) — 흰 여백은 CSS 링이 아니라 jpg에 구운 것, PIL 스캔라인으로 순백 구간 px 측정해야 육안 오판 방지
 - [Next.js 이식 후 IO 리빌 검증용 임시 라우트 기법](gopumgyeok-nextjs-migration-debug-route-technique.md) — 정적 사이트 삭제되고 Next.js(포트 3000)로 이식됨, `_debug_full.html` 대신 언더스코어 없는 임시 app 라우트로 우회
+- [--virtual-time-budget 단발 캡처의 스크롤 리빌 거짓 오버플로우](headless-virtual-time-budget-scroll-reveal-false-overflow.md) — 히어로 워드마크 등 애니메이션 요소가 중간 프레임에서 잘린 것처럼 찍힘, CDP 라이브 캡처(Emulation.setDeviceMetricsOverride)로 재확인하면 실제론 정상

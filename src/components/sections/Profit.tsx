@@ -1,9 +1,5 @@
-"use client";
-
-import type { CSSProperties } from "react";
-import { useReceiptReveal } from "@/hooks/useReceiptReveal";
-import { useProfitCountReveal } from "@/hooks/useProfitCountReveal";
 import { formatWon } from "@/libs/format";
+import { ProfitPieChart } from "@/components/sections/ProfitPieChart";
 import type { ProfitItem } from "@/types/content";
 
 interface ProfitProps {
@@ -11,9 +7,6 @@ interface ProfitProps {
 }
 
 export function Profit({ profit }: ProfitProps) {
-  useReceiptReveal();
-  useProfitCountReveal();
-
   return (
     <section className="profit" id="profit">
       <div className="wrap">
@@ -28,42 +21,27 @@ export function Profit({ profit }: ProfitProps) {
             전 가맹점 <span className="underline-mark">거짓 없이 공개하는</span> 안정적인 월 매출
           </p>
         </div>
-        <div id="profitCards" className="receipt-track">
-          {profit.map((item, i) => (
-            <div
-              className={`receipt-col${item.tall ? " center" : ""}`}
-              style={{ "--d": `${i * 140}ms` } as CSSProperties}
-              key={item.name}
-            >
-              <div className="printer-bar">
-                <div className="printer-slot"></div>
+        <div className="profit-grid">
+          {profit.map((item) => (
+            <div className="profit-card" key={item.name}>
+              <div className="profit-card__tag">{item.name}</div>
+              <div className="profit-card__photo">
+                <img src={item.image} alt={item.name} />
               </div>
-              <div className="receipt-mask">
-                <div className="receipt-body">
-                  <div className="receipt-paper">
-                    <div className="r-label">운영형태 [ 홀 / 셀프바 ]</div>
-                    <div className="r-store">{item.name}</div>
-                    <div className="r-sales" data-value={item.salesWon}>
-                      {formatWon(0)}
-                    </div>
-                    <div className="r-divider"></div>
-                    <div className="r-sub">
-                      순수익률 <b>{item.rate}%</b>
-                    </div>
-                    <div className="r-divider"></div>
-                    <div className="r-date">{item.open} 기준</div>
-                    <div className="r-barcode"></div>
-                  </div>
-                  <div className="receipt-scallop"></div>
+              <div className="profit-badges">
+                <div className="profit-badge">
+                  순수익률 <b>{item.rate}%</b>
+                </div>
+                <div className="profit-badge">
+                  월 매출 약 <b>{formatWon(item.salesManWon)}</b>만원
                 </div>
               </div>
+              <div className="profit-connector" aria-hidden="true"></div>
+              <ProfitPieChart cost={item.cost} rate={item.rate} />
             </div>
           ))}
         </div>
-        <p className="profit-footnote">
-          * 카탈로그에 명시된 실제 운영 데이터 기준입니다. 상권·평수·운영 방식에 따라 매장별 수치는
-          달라질 수 있습니다.
-        </p>
+        <p className="profit-footnote">*실제 데이터 기반으로 작성된 표입니다.</p>
       </div>
     </section>
   );
