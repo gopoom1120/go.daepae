@@ -11,8 +11,11 @@ interface ProfitPieChartProps {
 
 const SIZE = 400;
 const CENTER = 200;
-const RADIUS = 50;
-const STROKE_WIDTH = 100;
+/* 2026-10, 레퍼런스 이미지는 원이 카드 폭을 거의 꽉 채운다는 사용자 피드백으로
+   RADIUS/STROKE_WIDTH 를 키워 바깥 라벨 여백을 줄이고 링 자체를 확대했다
+   (기존 50/100 → 80/150, OUTER_R 100→155). */
+const RADIUS = 80;
+const STROKE_WIDTH = 150;
 const OUTER_R = RADIUS + STROKE_WIDTH / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
@@ -50,7 +53,7 @@ const pct = (n: number) => `${(n / SIZE) * 100}%`;
 
 /** 음료·주류 리더선 라벨은 각도 기반으로 두면 기타공과금 라벨과 겹치므로
     좌하단 고정 지점으로 꺾어 보낸다(실제 차트의 "독레그" 리더선 방식). */
-const LEADER_LABEL_POS = { x: SIZE * 0.1, y: SIZE * 0.96 };
+const LEADER_LABEL_POS = { x: SIZE * 0.02, y: SIZE * 1.1 };
 
 export function ProfitPieChart({ cost, rate }: ProfitPieChartProps) {
   const wrapRef = useRef<HTMLDivElement>(null);

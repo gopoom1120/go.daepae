@@ -1225,8 +1225,9 @@ section {
   stroke-dasharray: var(--len) var(--circumference);
 }
 .profit-pie__leader {
-  /* 레퍼런스의 잉크색(#14120f) 리더선 — 색상 출처는 위 SLICE_DEFS 주석과 동일 */
-  stroke: #14120f;
+  /* 레퍼런스는 흰 배경이라 잉크색(#14120f)이었지만, 이 프로젝트는 다크 섹션 배경이라
+     묻혀 안 보였다 — 사용자 피드백으로 흰색으로 교체 */
+  stroke: #ffffff;
   stroke-width: 1.5;
   opacity: 0.8;
 }
@@ -1297,7 +1298,7 @@ section {
   /* 파이 바깥 라벨(절대배치, 카드 폭을 넘어 그려질 수 있음)이 좁은 화면에서 뷰포트
      밖으로 잘리지 않도록, 파이 자체를 카드보다 작게 줄여 라벨이 번질 여백을 둔다. */
   .profit-pie {
-    max-width: 280px;
+    max-width: 220px;
   }
 }
 
