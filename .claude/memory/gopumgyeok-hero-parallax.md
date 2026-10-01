@@ -1,6 +1,6 @@
 ---
 name: gopumgyeok-hero-parallax
-description: 히어로 sticky 패럴랙스 구조와, 그 때문에 생긴 z-index·웨이브 투과 함정
+description: 히어로 sticky 패럴랙스 구조와 z-index·웨이브 투과 함정. 2026-10-01 nav-toggle도 같은 함정으로 재발 + iOS Safari fixed 요소 유령 잔상 버그(translateZ(0) 대응)
 metadata:
   type: project
 ---
@@ -20,3 +20,43 @@ metadata:
 **세로 위치 조절 레버:** `.hero`는 `justify-content:center`라 **위/아래 패딩 차이의 절반**만큼 콘텐츠가 밀린다. 위로 올리려면 아래 패딩을 키운다(현재 `150px 24px 120px` = 정중앙보다 15px 아래). 상단 150px은 고정 헤더를 피하는 값이라 줄이지 말 것.
 
 **Why:** sticky 전환은 한 줄 같아 보이지만 페인트 순서를 통째로 바꾼다. 위 두 가지는 실제로 화면이 깨진 뒤에 찾아낸 것이다.
+
+---
+
+**2026-10-01 추가 — 같은 "페인트 순서" 함정이 모바일 네비 토글에서도 재발했다.**
+`.nav-toggle`(헤더 우측 햄버거/닫기 버튼)이 열린 상태에서 완전히 안 보이는 버그가 있었다 —
+원인은 `.nav-links`(모바일 플라이아웃, `position:fixed`)가 **z-index:auto 인 positioned
+요소라 static 형제인 `.nav-toggle`보다 항상 위에 칠해졌기 때문**이다(이 메모리 위쪽의
+웨이브/footer 함정과 완전히 같은 CSS 규칙 — "positioned 요소는 z-index:auto 여도 static
+형제보다 항상 나중에 그려진다"). `.nav-toggle`에 `position:relative; z-index:1`을 줘서
+고쳤다. **일반화**: 이 프로젝트에서 fixed/sticky 요소를 새로 추가할 때마다 "그 요소와 겹치는
+static 형제가 가려지지 않는지"를 항상 확인해야 한다 — 벌써 3번째(웨이브/footer, 그리고 이번
+nav-toggle) 같은 패턴으로 터졌다.
+
+같은 세션에서 햄버거 아이콘 자체도 CSS `<span>` 3개 + `transform(rotate/translateY)`로
+수동으로 X 모양을 접던 방식에서 **`lucide-react`의 `Menu`/`X` 컴포넌트를 상태에 따라
+그대로 교체 렌더링**하는 방식으로 바꿨다(`SiteHeader.tsx`) — 수치 계산이 미세하게
+어긋나 삐뚤어진 X로 보이던 문제도 같이 해결됨. `lucide-react`는 이미 의존성에 있었지만
+이게 프로젝트에서 **처음으로 실제 임포트된 사용처**다.
+
+**2026-10-01 추가 — iOS Safari 전용 "fixed 요소 유령 잔상" 버그 (실기기에서만 재현, Chrome/
+Playwright로는 검증 불가).** 사용자가 아이폰 14 사파리에서 스크린샷을 보내 "텍스트가 헤더
+위로 겹쳐 보인다"고 제보했다. 이 페이지엔 겹친 fixed/sticky 레이어가 많다(고정 헤더, 스티키
+히어로, 고정 우측 탭 `.inquiry-fab`, PC용 하단 고정 폼 바) — iOS Safari가 스크롤 중 이런
+레이어를 재합성(repaint)할 때 한 프레임 쌓임 순서/잔상이 꼬이는 알려진 버그 유형이다.
+**1차 시도로 `header.nav`와 `.hero`에 `transform:translateZ(0)`(GPU 레이어 강제 승격)를
+추가했는데, 사용자가 같은 증상의 새 스크린샷을 다시 보내 확인해보니 실제로 겹쳐 보인 건
+헤더가 아니라 `.inquiry-fab`(우측 세로 "창업 문의" 탭) 자신의 잔상이었다** — 첫 스크린샷
+만으로 겹친 요소를 단정하지 말고, 재현 스크린샷의 색상/텍스트로 정확히 어느 컴포넌트인지
+다시 확인해야 한다. `.inquiry-fab`은 `transform:translateY(-50%)`만 쓰고 있었는데,
+`translate3d(0,-50%,0)` + `will-change:transform`으로 바꿔 명시적으로 자체 GPU 레이어를
+강제해서 고쳤다(2026-10-01, 커밋 `a2b80ae`).
+
+**Why:** 실기기 Safari 버그라 로컬(Chrome 헤드리스/Playwright)로는 재현도 검증도 안 된다 —
+"로컬에서 멀쩡해 보이니 안 고쳤다"고 판단하면 안 된다. `transform:translateZ(0)` /
+`translate3d(...)` + `will-change:transform` 조합은 이 프로젝트에서 fixed/sticky 요소가
+iOS Safari에서 잔상/쌓임 문제를 보일 때 시도할 1차 대응으로 검증됐다 — 다만 **어느 요소가
+실제로 깨졌는지는 매번 스크린샷으로 재확인해야 한다(헤더가 범인이라고 가정하지 말 것)**.
+아직 완전히 해결됐다는 최종 확인(사용자 실기기 재테스트)은 받지 못한 상태다 — 다음 세션에서
+같은 제보가 또 오면 `.sticky-inquiry-bar`(PC 전용 하단 고정 바)나 `.inquiry-sheet-backdrop`
+같은 나머지 fixed 요소들도 같은 방식으로 의심해볼 것.

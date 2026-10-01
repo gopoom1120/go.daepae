@@ -29,7 +29,7 @@ header.nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 48px;
+  padding: 10px 48px;
   /* opacity 를 헤더 자체에 걸면 로고·메뉴·버튼까지 같이 흐려지므로,
      그라디언트 대신 배경에만 알파를 준 단색 검정을 쓴다. */
   background: rgba(0, 0, 0, 0.6);

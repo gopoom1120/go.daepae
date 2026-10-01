@@ -4,7 +4,7 @@
 - [프로젝트 성격](gopumgyeok-landing-project.md) — 0007은 실클라이언트 납품용 랜딩 시안A_v2, 임의 재작성 금지
 - [디자인 시스템](gopumgyeok-design-system.md) — 골드/레드 토큰(--bg-card는 흰색), Pretendard self-host+RixYeoljeongdo, 5섹션+히어로+문의 Bottom Sheet. 2026-10-01 #profit만 다크→흰 배경 전환, CLAUDE.md 다크섹션 목록 불일치 주의
 - [shadcn 재설계 후 원복](gopumgyeok-shadcn-detour-reverted.md) — 2026-09-04 shadcn 전면 재설계했다가 같은 날 골드/레드로 되돌림, CLAUDE.md 등 문서는 아직 shadcn 기준(불일치 주의)
-- [히어로 sticky 패럴랙스](gopumgyeok-hero-parallax.md) — 히어로 전체 고정, 그 여파로 생긴 z-index·웨이브 투과 함정(웨이브는 wave--from-profit 1개만 남음)
+- [히어로 sticky 패럴랙스](gopumgyeok-hero-parallax.md) — z-index·웨이브 투과 함정(nav-toggle도 재발, 2026-10-01). iOS Safari fixed 요소 유령 잔상 버그와 translateZ(0) 대응도 기록
 - [헤드리스 시각 검증법](gopumgyeok-headless-verification.md) — 브라우저 확장 없음, CDP 직접 접속으로 라이브 캡처. --screenshot 단발 캡처는 스크롤 리빌 요소에서 거짓 오버플로우를 만듦(2026-10-01), 작은 아이콘 확대는 LANCZOS로(2026-09-24)
 - [영수증 카드(폐기됨)](gopumgyeok-receipt-card.md) — 2026-10-01 파이차트 카드로 완전 교체, 과거 마크업 더 이상 존재 안 함. "원" 단위 생략·cqw 폰트 패턴만 유효하게 승계
 - [브랜드 원본 데이터](gopumgyeok-brand-data.md) — 슬로건·메뉴 9종·셀프바 25종·3개 매장 매출/수익률·연락처. 2026-09-27 셀프바도 메뉴처럼 jpg→투명배경 AI png 전환(24종, 원본 jpg 디스크에서 소실)
