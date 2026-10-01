@@ -2119,7 +2119,12 @@ textarea {
   right: 0;
   top: 50%;
   z-index: 90;
-  transform: translateY(-50%);
+  /* 2026-10, iOS Safari에서 스크롤 중 이 탭이 이전 위치의 "유령" 잔상과 겹쳐 보이는
+     버그 — translateY(-50%)만으로는 별도 GPU 레이어로 승격되지 않는 경우가 있어
+     translate3d + will-change 로 명시적으로 자체 합성 레이어를 강제한다
+     (header.nav/.hero 에 적용한 것과 같은 대응). */
+  transform: translate3d(0, -50%, 0);
+  will-change: transform;
   flex-direction: column;
   align-items: center;
   gap: 16px;
