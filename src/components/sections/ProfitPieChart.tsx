@@ -40,8 +40,8 @@ const SLICE_DEFS: Array<{
   { key: "meat", label: "고기", color: "#a18564", textColor: CREAM },
   { key: "labor", label: "인건비", color: "#dfdad3", textColor: INK },
   { key: "utilities", label: "기타 공과금", color: "#393b3b", textColor: CREAM },
-  { key: "drink", label: "음료", color: "#7d7f82", textColor: INK, leader: true },
-  { key: "alcohol", label: "주류", color: "#14120f", textColor: INK, leader: true },
+  { key: "drink", label: "음료", color: "#14120f", textColor: INK, leader: true },
+  { key: "alcohol", label: "주류", color: "#7d7f82", textColor: INK, leader: true },
 ];
 
 /** angleDeg: 12시 방향이 0, 시계방향으로 증가 */
