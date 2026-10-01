@@ -54,7 +54,9 @@ const pct = (n: number) => `${(n / SIZE) * 100}%`;
 
 /** 음료·주류 리더선 라벨은 각도 기반으로 두면 기타공과금 라벨과 겹치므로
     좌하단 고정 지점으로 꺾어 보낸다(실제 차트의 "독레그" 리더선 방식). */
-const LEADER_LABEL_POS = { x: SIZE * 0.02, y: SIZE * 1.1 };
+/* 2026-10, 다른 4개 라벨이 조각 안으로 들어와 바깥 공간을 쓸 일이 줄어든 만큼
+   리더선이 불필요하게 길어 보인다는 피드백으로 링에 더 가깝게 당겼다(1.1→0.88). */
+const LEADER_LABEL_POS = { x: SIZE * 0.05, y: SIZE * 0.88 };
 
 export function ProfitPieChart({ cost, rate }: ProfitPieChartProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
