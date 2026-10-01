@@ -20,8 +20,9 @@ type CostKey = keyof ProfitCostBreakdown;
 
 /* 2026-10, 사용자가 준 레퍼런스 파이차트 이미지에서 픽셀 샘플링한 색이다 — 11개 토큰 중
    이 톤을 내는 게 없어 배지 배경(#ebe0d1) 때와 같은 방식으로 리터럴 hex 를 쓴다.
-   textColor 는 레퍼런스에서 해당 조각 위 글자색을 그대로 딴 것(밝은 조각엔 잉크색 #14120f,
-   어두운 조각엔 크림색 #dfdad3 — 라이트/다크 섹션 텍스트 반전 관례와 같은 원리). */
+   textColor 는 각 라벨이 실제로 깔리는 배경(다크 섹션 배경, 조각 자체가 아니다 — 라벨은
+   OUTER_R+26 위치로 링 밖에 나가 있다) 기준으로 정한다. 2026-10, 인건비 라벨이 잉크색이라
+   다크 배경에 거의 안 보이던 걸 사용자가 지적해 크림색으로 통일했다. */
 const INK = "#14120f";
 const CREAM = "#dfdad3";
 const SLICE_DEFS: Array<{
@@ -33,7 +34,7 @@ const SLICE_DEFS: Array<{
 }> = [
   { key: "food", label: "식자재", color: "#7e674a", textColor: CREAM },
   { key: "meat", label: "고기", color: "#a18564", textColor: CREAM },
-  { key: "labor", label: "인건비", color: "#dfdad3", textColor: INK },
+  { key: "labor", label: "인건비", color: "#dfdad3", textColor: CREAM },
   { key: "utilities", label: "기타 공과금", color: "#393b3b", textColor: CREAM },
   { key: "drink", label: "음료", color: "#7d7f82", textColor: INK, leader: true },
   { key: "alcohol", label: "주류", color: "#14120f", textColor: INK, leader: true },
