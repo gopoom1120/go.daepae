@@ -2,8 +2,8 @@
   "_readme": "고품격대패 랜딩 콘텐츠 단일 진실 공급원. 이 파일만 고치면 화면이 바뀐다. desc 로 끝나는 필드는 <b> 같은 인라인 태그를 그대로 쓸 수 있고(HTML 로 삽입됨), 그 외 텍스트 필드는 자동 이스케이프된다.",
   "contact": {
     "phone": "1877-1960",
-    "instagram": "@go_daepae",
-    "instagramUrl": "https://www.instagram.com/go_daepae"
+    "instagram": "@go_daepae_",
+    "instagramUrl": "https://www.instagram.com/go_daepae_"
   },
   "competency": [
     {
@@ -247,7 +247,7 @@
     },
     {
       "name": "천호 직영점",
-      "date": "2025. 03. 04 OPEN",
+      "date": "2025. 02. 11 OPEN",
       "image": "/assets/imgs/bg.png",
       "mapUrl": "https://map.naver.com/p/search/고품격대패 천호"
     },

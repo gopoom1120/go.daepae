@@ -1019,7 +1019,10 @@ section {
   left: 4.2%;
   top: 7.5%;
   width: 92%;
-  height: 90%;
+  height: auto;
+  max-height: 90%;
+  object-fit: cover;
+  object-position: top;
   border-radius: 0 0 30px 30px;
 }
 .review-phone__frame {

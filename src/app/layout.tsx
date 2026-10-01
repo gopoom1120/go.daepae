@@ -19,7 +19,7 @@ import { CmsPopupModal } from "@/components/popup/CmsPopupModal";
 const SITE_URL = "https://xn--i89a2dz9q2p1bhpb.com";
 const SITE_TITLE = "고품격대패 대패의 격이 다르다";
 const SITE_DESCRIPTION =
-  "해썹 인증 국내산 암퇘지와 UN 인증 친환경 브랜드 '아그로수퍼', 25종 이상 셀프바로 완성하는 고품격 대패삼겹살 전문점. 프랜차이즈 창업 문의는 지금 바로.";
+  "해썹 인증 국내산 암퇘지와 UN 인증 친환경 브랜드 '아그로수퍼', 25종 이상 셀프바로 완성하는 고품격대패. 프랜차이즈 창업 문의는 지금 바로.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

@@ -22,9 +22,15 @@ export function Reviews() {
           </p>
         </div>
         <div className="review-grid" ref={gridRef}>
-          <div className="review-item">
+          <a
+            className="review-item"
+            href="https://map.naver.com/p/search/고품격대패 시흥 은계?placePath=%2Freview"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="고품격대패 시흥 은계점 네이버 리뷰 보기 (새 창)"
+          >
             <div className="review-badge">
-              시흥 은계점 <b>리뷰 116+</b>
+              시흥 은계점 <b>리뷰 320+</b>
             </div>
             <div className="review-phone">
               <img
@@ -39,10 +45,16 @@ export function Reviews() {
                 aria-hidden="true"
               />
             </div>
-          </div>
-          <div className="review-item">
+          </a>
+          <a
+            className="review-item"
+            href="https://map.naver.com/p/search/고품격대패 왕십리?placePath=%2Freview"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="고품격대패 왕십리 본점 네이버 리뷰 보기 (새 창)"
+          >
             <div className="review-badge">
-              왕십리 본점 <b>리뷰 675+</b>
+              왕십리 본점 <b>리뷰 1,208+</b>
             </div>
             <div className="review-phone">
               <img
@@ -57,10 +69,16 @@ export function Reviews() {
                 aria-hidden="true"
               />
             </div>
-          </div>
-          <div className="review-item">
+          </a>
+          <a
+            className="review-item"
+            href="https://map.naver.com/p/search/고품격대패 천호?placePath=%2Freview"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="고품격대패 천호 직영점 네이버 리뷰 보기 (새 창)"
+          >
             <div className="review-badge">
-              천호 직영점 <b>리뷰 24+</b>
+              천호 직영점 <b>리뷰 1,002+</b>
             </div>
             <div className="review-phone">
               <img
@@ -75,7 +93,7 @@ export function Reviews() {
                 aria-hidden="true"
               />
             </div>
-          </div>
+          </a>
         </div>
       </div>
     </section>
