@@ -124,8 +124,8 @@ header.nav.scrolled {
 
 @media (max-width: 1024px) {
   header.nav {
-    padding-left: 32px;
-    padding-right: 32px;
+    padding-left: 20px;
+    padding-right: 20px;
   }
   .nav-links {
     position: fixed;
