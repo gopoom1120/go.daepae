@@ -8,7 +8,7 @@ export function PromiseBanner() {
         <h2 className="promise-line">
           성공의 시작을
           <br />
-          <em className="accent-impact">고품격대패가 함께합니다</em>
+          <em className="accent-impact">고품격대패가 함께합니다.</em>
         </h2>
         <p className="promise-sub">
           메뉴 개발부터 매장 운영까지 창업 준비 전 과정을 본사가 체계적으로 지원합니다.

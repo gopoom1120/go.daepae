@@ -144,3 +144,6 @@ vite.config.ts.timestamp-*
 
 # macOS
 .DS_Store
+
+# Playwright MCP debug output (screenshots/console logs/page snapshots, no project meaning)
+.playwright-mcp/

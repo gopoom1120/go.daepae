@@ -56,7 +56,17 @@ const pct = (n: number) => `${(n / SIZE) * 100}%`;
     좌하단 고정 지점으로 꺾어 보낸다(실제 차트의 "독레그" 리더선 방식). */
 /* 2026-10, 다른 4개 라벨이 조각 안으로 들어와 바깥 공간을 쓸 일이 줄어든 만큼
    리더선이 불필요하게 길어 보인다는 피드백으로 링에 더 가깝게 당겼다(1.1→0.88). */
-const LEADER_LABEL_POS = { x: SIZE * 0.05, y: SIZE * 0.88 };
+/* 2026-10, "음료·주류" 합성 라벨 + 선 1개를 레퍼런스처럼 각 조각이 자기 선을 갖는
+   형태(음료 선 1개, 주류 선 1개, 라벨도 각각 별도 텍스트)로 분리했다. 두 라벨은
+   나란히 놓이되 겹치지 않도록 x 를 떨어뜨린다. */
+const LEADER_LABEL_POS: Record<"drink" | "alcohol", { x: number; y: number }> = {
+  drink: { x: SIZE * 0.1, y: SIZE * 0.88 },
+  alcohol: { x: SIZE * 0.26, y: SIZE * 0.88 },
+};
+/* 2026-10, 선 끝과 텍스트가 맞닿아 겹쳐 보인다는 피드백으로, 선은 LEADER_LABEL_POS 에서
+   멈추고 텍스트는 그보다 살짝 아래(이 간격만큼)에서 시작하도록 띄웠다.
+   2026-10, 0.035 는 간격이 너무 벌어져 보인다는 피드백으로 더 좁혔다. */
+const LEADER_LABEL_GAP = SIZE * 0.015;
 
 export function ProfitPieChart({ cost, rate }: ProfitPieChartProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -90,12 +100,28 @@ export function ProfitPieChart({ cost, rate }: ProfitPieChartProps) {
 
   const outsideSlices = costSlices.filter((s) => !s.leader);
   const leaderSlices = costSlices.filter((s) => s.leader);
+  /* 2026-10, 음료·주류 각 조각의 실제 중심각에서 선을 바로 뽑으면 두 조각이 맞닿은
+     순서(음료가 더 오른쪽/아래, 주류가 더 왼쪽/위)와 라벨을 읽는 순서(음료 왼쪽, 주류
+     오른쪽)가 어긋나 선 두 개가 X 자로 교차했다. 한 점(apex)에서 포크로 갈라지게 했던
+     중간 시도는 레퍼런스처럼 "선 2개가 각자 다른 지점에서 시작"하는 모양이 아니었다.
+     이 두 조각을 합친 가는 쐐기(utilities 와 profit 사이)의 양쪽 끝 경계를 그대로 쓰면
+     출발점이 서로 너무 멀어져 한쪽은 위로, 한쪽은 아래로 치우쳐 보였다 — 피드백으로
+     쐐기의 중심각(leaderMidAngle) 쪽으로 당겨 두 출발점이 조각들이 만나는 꼭짓점
+     가까이에 모이도록 좁혔다(LEADER_START_NARROW). 오른쪽(아래)점→오른쪽 라벨(주류),
+     왼쪽(위)점→왼쪽 라벨(음료)로 잇는 순서는 유지해 교차는 여전히 없다. */
   const leaderStart = leaderSlices[0]?.c ?? 0;
   const leaderEnd = leaderSlices.length
     ? leaderSlices[leaderSlices.length - 1].c + leaderSlices[leaderSlices.length - 1].value
     : 0;
   const leaderMidAngle = ((leaderStart + leaderEnd) / 2 / 100) * 360;
-  const leaderLabel = leaderSlices.map((s) => s.label).join("·");
+  const leaderHalfSpan = (((leaderEnd - leaderStart) / 100) * 360) / 2;
+  const LEADER_START_NARROW = 0.35;
+  const leaderRightEdge = toXY(leaderMidAngle - leaderHalfSpan * LEADER_START_NARROW, OUTER_R);
+  const leaderLeftEdge = toXY(leaderMidAngle + leaderHalfSpan * LEADER_START_NARROW, OUTER_R);
+  const leaderFrom: Record<"drink" | "alcohol", { x: number; y: number }> = {
+    drink: leaderLeftEdge,
+    alcohol: leaderRightEdge,
+  };
   /* 순수익 조각은 폭이 넓어(120~145도) 각도상 중앙(단순 평균)에 라벨을 두면 0도(식자재 경계)
      쪽으로 치우쳐 텍스트 일부가 옆 조각과 겹친다 — 경계에서 먼 쪽으로 약간 민다. */
   const overlayPos = toXY(profitSlice.angle - 15, RADIUS + 4);
@@ -125,18 +151,27 @@ export function ProfitPieChart({ cost, rate }: ProfitPieChartProps) {
             />
           ))}
         </g>
-        {leaderSlices.length > 0 &&
-          (() => {
-            const from = toXY(leaderMidAngle, OUTER_R);
-            const bend = toXY(leaderMidAngle, OUTER_R + 14);
-            return (
-              <polyline
-                className="profit-pie__leader"
-                points={`${from.x},${from.y} ${bend.x},${bend.y} ${LEADER_LABEL_POS.x},${LEADER_LABEL_POS.y}`}
-                fill="none"
-              />
-            );
-          })()}
+        {leaderSlices.map((s) => {
+          const key = s.key as "drink" | "alcohol";
+          const pos = LEADER_LABEL_POS[key];
+          const from = leaderFrom[key];
+          /* 2026-10, 다른 4개 라벨의 독레그 리더선과 통일감을 주기 위해 한 번 꺾이게
+             했다 — 조각 경계에서 비스듬히 내려오다(1 구간) 라벨 바로 위에서 수직으로
+             꺾여 떨어진다(2 구간). bend.x 를 라벨의 x 와 같게 두면 2 구간이 자동으로
+             수직선이 된다. 2026-10, 사용자가 준 레퍼런스는 왼쪽(음료) 선은 꺾임 지점까지
+             비스듬한 구간이 길고, 오른쪽(주류) 선은 거의 수직에 가깝다 — 꺾이는 비율을
+             좌우 다르게 줘서 그 느낌을 재현했다. */
+          const bendRatio = key === "drink" ? 0.55 : 0.2;
+          const bend = { x: pos.x, y: from.y + (pos.y - from.y) * bendRatio };
+          return (
+            <polyline
+              key={s.key}
+              className="profit-pie__leader"
+              points={`${from.x},${from.y} ${bend.x},${bend.y} ${pos.x},${pos.y}`}
+              fill="none"
+            />
+          );
+        })}
       </svg>
 
       {/* 2026-10, 레퍼런스처럼 라벨을 링 밖이 아니라 조각 안에 직접 앉힌다 — 링 밖 배치
@@ -165,14 +200,18 @@ export function ProfitPieChart({ cost, rate }: ProfitPieChartProps) {
         );
       })}
 
-      {leaderSlices.length > 0 && (
-        <div
-          className="profit-pie__leader-label"
-          style={{ left: pct(LEADER_LABEL_POS.x), top: pct(LEADER_LABEL_POS.y) }}
-        >
-          {leaderLabel}
-        </div>
-      )}
+      {leaderSlices.map((s) => {
+        const pos = LEADER_LABEL_POS[s.key as "drink" | "alcohol"];
+        return (
+          <div
+            key={s.key}
+            className="profit-pie__leader-label"
+            style={{ left: pct(pos.x), top: pct(pos.y + LEADER_LABEL_GAP) }}
+          >
+            {s.label}
+          </div>
+        );
+      })}
 
       <div
         className="profit-pie__overlay"

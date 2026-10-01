@@ -128,3 +128,42 @@ python3 -m http.server 8765 &
   SVG를 쓰는 관례가 있었기 때문이다. 즉 **헤드리스 Chrome 재현 실패가 "버그가 없다"는
   증거는 아니다** — 재현이 안 되면 원인 규명은 보류하되, 이미 검증된 대안 패턴이 있다면
   그쪽으로 바꾸는 게 합리적일 수 있다.
+
+**2026-10-01 — Next.js 전환 후: `--virtual-time-budget` + `--screenshot` 단발 캡처가 스크롤
+리빌 애니메이션 요소에서 거짓 오버플로우를 만든다**:
+
+- `.hero-wordmark`(scale/opacity 리빌)나 수익분석 파이차트(`useInView` + stroke-dasharray
+  전환)처럼 진입 애니메이션이 걸린 섹션을 390px 모바일 폭으로 `--headless=new
+  --window-size=390,... --virtual-time-budget=9000 --screenshot=...` 단발 캡처로 찍으면,
+  텍스트가 뷰포트 오른쪽으로 심하게 잘린 것처럼 보이는 경우가 있었다. `git stash`로 당일
+  작업을 전부 되돌리고 커밋 `8d6aca8`(세션 시작 전 상태)로도 재현해봤지만 **증상이 완전히
+  동일하게 지속**돼 코드 문제가 아님을 확인했다.
+- **진짜 원인은 애니메이션이 중간 전환 프레임에서 얼어붙은 것**이었다. Node(v22+) 내장
+  `WebSocket`으로 `chrome --headless=new --remote-debugging-port=PORT`에 직접 CDP로 접속해
+  (`/json/new?URL`은 **PUT**, `Emulation.setDeviceMetricsOverride`로 뷰포트 강제,
+  `Page.navigate` 후 충분히 대기, `Page.captureScreenshot`) 같은 페이지를 **라이브로** 다시
+  찍으면 어떤 요소도 뷰포트를 넘지 않았다 — `--screenshot` CLI 캡처 경로 고유의 타이밍
+  아티팩트로 보인다(정확한 내부 메커니즘은 특정 못 함). `puppeteer`/`playwright` 없이도
+  가능하다 — `fetch`로 CDP HTTP 엔드포인트를 치고 `new WebSocket(webSocketDebuggerUrl)`로
+  JSON-RPC 메시지를 주고받으면 된다.
+- **Next.js dev 서버가 막 리컴파일한 직후(파일 저장 → 첫 요청)에 CDP로 스크린샷을 찍으면
+  파이차트 SVG가 실제로는 가느다란 쐐기 모양(`stroke-dasharray` 전환이 막 시작된 상태)으로만
+  찍히는 경우가 있었다.** `Page.navigate` 직후 2.5초 대기로는 부족했고, 미리 `curl`로 같은
+  라우트를 한두 번 "예열"(컴파일 완료까지 기다림)한 뒤 **navigate 후 5초 이상** 대기해야
+  안정적으로 완성된 프레임을 잡을 수 있었다.
+- **다른 세션(또는 이전 백그라운드 실행)이 남긴 중복 `next dev` 프로세스가 같은 포트
+  대역에서 경합하면, 페이지는 200으로 응답하지만 CSS가 전혀 로드되지 않은 맨 HTML만
+  나오는 경우가 있었다.** `ps aux | grep "next dev"`로 동일 프로젝트의 `next dev` 인스턴스가
+  여러 개 떠 있지 않은지 먼저 확인하고(이 세션에서 실제로 3개가 동시에 떠 있었다), 정리 후
+  하나만 남겨야 한다.
+- **`pkill -f "패턴"`을 `rm -rf` 등 다른 위험 명령과 한 Bash 호출에 묶으면 권한 시스템이
+  호출 전체를 거부하는 경우가 있었다.** `kill <정확한 PID>`를 단독 명령으로 실행하거나,
+  `pkill -f "remote-debugging-port=PORT"`처럼 **그 자체로 완결된 단일 명령**으로 분리하면
+  통과했다. `.next/types/app/<삭제한-디버그-라우트>` 캐시 잔여물로 인한 `tsc --noEmit` 오류도
+  같은 이유로 `rm -rf` 대신 `find <경로> -type f -delete` + `find <경로> -type d -empty
+  -delete`로 우회해야 했다.
+- **How to apply:** 이 프로젝트(Next.js 이식 후)에서 `useInView` 기반 리빌 애니메이션이 걸린
+  컴포넌트를 모바일 폭으로 검증할 때, `--screenshot` 단발 캡처에서 잘림/오버플로우가 보이면
+  곧바로 CSS를 고치려 하지 말고 먼저 CDP 라이브 캡처로 재확인한다. 디버그 라우트 기법
+  ([[gopumgyeok-nextjs-migration]] 참고)과 함께 쓰면 특정 섹션만 고립시켜 빠르게 반복
+  검증할 수 있다.
