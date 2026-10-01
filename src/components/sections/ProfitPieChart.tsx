@@ -23,9 +23,10 @@ type CostKey = keyof ProfitCostBreakdown;
 
 /* 2026-10, 사용자가 준 레퍼런스 파이차트 이미지에서 픽셀 샘플링한 색이다 — 11개 토큰 중
    이 톤을 내는 게 없어 배지 배경(#ebe0d1) 때와 같은 방식으로 리터럴 hex 를 쓴다.
-   textColor 는 각 라벨이 실제로 깔리는 배경(다크 섹션 배경, 조각 자체가 아니다 — 라벨은
-   OUTER_R+26 위치로 링 밖에 나가 있다) 기준으로 정한다. 2026-10, 인건비 라벨이 잉크색이라
-   다크 배경에 거의 안 보이던 걸 사용자가 지적해 크림색으로 통일했다. */
+   textColor 는 레퍼런스처럼 라벨이 해당 조각 위에 직접 앉으므로 그 조각 색 기준으로
+   정한다(밝은 조각엔 잉크색, 어두운 조각엔 크림색). 음료·주류는 조각이 너무 가늘어
+   여전히 링 밖 리더선 라벨을 쓰므로 거기 깔리는 다크 섹션 배경 기준 잉크/크림과 무관하게
+   별도 CSS(.profit-pie__leader-label)로 색을 관리한다. */
 const INK = "#14120f";
 const CREAM = "#dfdad3";
 const SLICE_DEFS: Array<{
@@ -37,7 +38,7 @@ const SLICE_DEFS: Array<{
 }> = [
   { key: "food", label: "식자재", color: "#7e674a", textColor: CREAM },
   { key: "meat", label: "고기", color: "#a18564", textColor: CREAM },
-  { key: "labor", label: "인건비", color: "#dfdad3", textColor: CREAM },
+  { key: "labor", label: "인건비", color: "#dfdad3", textColor: INK },
   { key: "utilities", label: "기타 공과금", color: "#393b3b", textColor: CREAM },
   { key: "drink", label: "음료", color: "#7d7f82", textColor: INK, leader: true },
   { key: "alcohol", label: "주류", color: "#14120f", textColor: INK, leader: true },
@@ -136,17 +137,27 @@ export function ProfitPieChart({ cost, rate }: ProfitPieChartProps) {
           })()}
       </svg>
 
+      {/* 2026-10, 레퍼런스처럼 라벨을 링 밖이 아니라 조각 안에 직접 앉힌다 — 링 밖 배치
+         시절의 좌/우 정렬 분기(align)는 더 이상 필요 없다. 정확히 센터라인(RADIUS)이
+         아니라 +20 바깥쪽에 두는 이유는, 센터라인에 두면 좁은 모바일 박스에서 중앙
+         "순수익 N%" 오버레이와 겹치기 때문이다. */}
       {outsideSlices.map((s) => {
-        const { x, y } = toXY(s.angle, OUTER_R + 26);
-        const dx = x - CENTER;
-        const align = dx > 10 ? "left" : dx < -10 ? "right" : "center";
+        const { x, y } = toXY(s.angle, RADIUS + 20);
         return (
           <div
             key={s.key}
-            className={`profit-pie__slice-label profit-pie__slice-label--${align}`}
+            className="profit-pie__slice-label"
             style={{ left: pct(x), top: pct(y), color: s.textColor }}
           >
-            <span>{s.label}</span>
+            <span>
+              {/* "기타 공과금"처럼 공백이 있는 라벨은 레퍼런스처럼 단어 단위로 줄바꿈한다
+                 (좁은 조각 안에서 옆 라벨과 겹치지 않도록) */}
+              {s.label.split(" ").map((word, idx) => (
+                <span key={idx} style={{ display: "block" }}>
+                  {word}
+                </span>
+              ))}
+            </span>
             <b>{s.value}%</b>
           </div>
         );

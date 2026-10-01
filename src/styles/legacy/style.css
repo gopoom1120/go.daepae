@@ -1248,14 +1248,6 @@ section {
   color: inherit;
   font-weight: 800;
 }
-.profit-pie__slice-label--left {
-  transform: translate(0, -50%);
-  text-align: left;
-}
-.profit-pie__slice-label--right {
-  transform: translate(-100%, -50%);
-  text-align: right;
-}
 .profit-pie__leader-label {
   position: absolute;
   transform: translate(0, -50%);
@@ -1298,7 +1290,10 @@ section {
   /* 파이 바깥 라벨(절대배치, 카드 폭을 넘어 그려질 수 있음)이 좁은 화면에서 뷰포트
      밖으로 잘리지 않도록, 파이 자체를 카드보다 작게 줄여 라벨이 번질 여백을 둔다. */
   .profit-pie {
-    max-width: 220px;
+    /* 2026-10, 라벨이 링 밖이 아니라 안으로 들어오면서 바깥 여백이 덜 필요해져
+       다시 키웠다(220px → 300px) — 폰트 크기가 전역 하한(18px)이라 박스가 좁으면
+       라벨끼리 겹친다. */
+    max-width: 300px;
   }
 }
 
