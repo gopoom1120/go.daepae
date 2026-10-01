@@ -14,7 +14,7 @@ export function Cost({ cost }: CostProps) {
         <div className="section-head">
           <div className="kicker">04 · FRANCHISE COST</div>
           <h2>
-            <span className="cost-title-line1">점주들의 의한 고품격 이벤트</span>
+            <span className="cost-title-line1">점주들을 위한 고품격 이벤트</span>
             <br />
             <span className="h2-accent accent-impact">7호점까지!!</span>
           </h2>

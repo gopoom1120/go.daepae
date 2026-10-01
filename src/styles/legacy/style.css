@@ -1382,7 +1382,7 @@ section {
   --text: var(--text-invert);
 } /* 어두운 배경 — section-head h2, 금액 열(마지막 span)이 밝은 글자를 쓰도록. cost-head 흰 줄은 자체 gold 색을 써서 영향 없음 */
 .cost-title-line1 {
-  white-space: nowrap; /* PC 에서 "점주들의 의한 고품격 이벤트"가 두 줄로 안 꺾이게 한다 */
+  white-space: nowrap; /* PC 에서 "점주들을 위한 고품격 이벤트"가 두 줄로 안 꺾이게 한다 */
 }
 @media (max-width: 1024px) {
   .cost-title-line1 {
