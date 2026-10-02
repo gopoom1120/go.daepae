@@ -942,6 +942,10 @@ section {
     grid-template-columns: repeat(4, 1fr);
     row-gap: 24px;
   }
+
+  .sb-item span {
+    font-size: 15px;
+  }
 }
 
 /* REVIEWS — 실제 네이버 리뷰 스크린샷(review1~3.png)을 아이폰 목업(iphone.png)에 끼워 넣은 소비자 찐후기.
