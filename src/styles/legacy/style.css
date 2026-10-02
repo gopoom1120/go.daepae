@@ -2133,6 +2133,9 @@ textarea {
 .inquiry-fab__label {
   writing-mode: vertical-rl;
   text-orientation: upright;
+  /* iOS Safari 가 "창업 문의"의 공백에서 두 번째 세로 열로 줄바꿈해버리는 버그가 있어
+     (Chrome 에선 재현 안 됨 — WebKit 세로쓰기 줄바꿈 차이) nowrap 으로 한 열에 고정한다. */
+  white-space: nowrap;
   font-weight: 700;
   font-size: 18px;
   letter-spacing: 0.1em;
