@@ -21,7 +21,7 @@ export function Menu({ meat, selfbar }: MenuProps) {
         <div className="section-head">
           <div className="kicker">02 · MENU</div>
           <h2>
-            고기 종류 <span className="h2-accent accent-impact">9가지</span>
+            다양한 <span className="h2-accent accent-impact">고기종류</span>
           </h2>
           <p>돼지고기 소고기 오리고기 등 다양한 부위를 대패로 즐길 수 있습니다.</p>
         </div>
