@@ -18,6 +18,14 @@ export function Menu({ meat, selfbar }: MenuProps) {
   return (
     <section className="menu" id="menu">
       <div className="wrap">
+        <div className="menu-banner">
+          <div
+            className="menu-banner__bg"
+            role="img"
+            aria-label="고품격대패 매장 물결형 인테리어 월사인"
+          ></div>
+          <div className="menu-banner__overlay" />
+        </div>
         <div className="section-head">
           <div className="kicker">02 · MENU</div>
           <h2>
@@ -38,7 +46,10 @@ export function Menu({ meat, selfbar }: MenuProps) {
 
         <div className="selfbar-note">
           <b>셀프바 25종 이상</b>
-          <span>단돈 2000원으로 즐기는 나만의 상차림 (상권에 따라 일부 셀프바 변경 가능)</span>
+          <span>
+            단돈 2000원으로 즐기는 나만의 상차림 *계절과 식재료 시세에 맞춰 각 지점에서 셀프바
+            구성을 탄력적으로 운영해 안정적인 수익성을 유지합니다.
+          </span>
         </div>
         <div className="selfbar-grid" id="selfbarGrid" ref={selfbarRef}>
           {selfbar.map((item) => (

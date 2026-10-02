@@ -4,6 +4,7 @@ import { Hero } from "@/components/sections/Hero";
 import { Competitiveness } from "@/components/sections/Competitiveness";
 import { Menu } from "@/components/sections/Menu";
 import { Reviews } from "@/components/sections/Reviews";
+import { Interior } from "@/components/sections/Interior";
 import { Profit } from "@/components/sections/Profit";
 import { PromiseBanner } from "@/components/sections/PromiseBanner";
 import { Cost } from "@/components/sections/Cost";
@@ -18,6 +19,7 @@ export default function Home() {
       <Competitiveness competency={data.competency} trust={data.trust} />
       <Menu meat={data.meat} selfbar={data.selfbar} />
       <Reviews />
+      <Interior />
       <Profit profit={data.profit} />
       <PromiseBanner />
       <Cost cost={data.cost} />

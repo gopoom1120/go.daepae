@@ -167,3 +167,36 @@ python3 -m http.server 8765 &
   곧바로 CSS를 고치려 하지 말고 먼저 CDP 라이브 캡처로 재확인한다. 디버그 라우트 기법
   ([[gopumgyeok-nextjs-migration]] 참고)과 함께 쓰면 특정 섹션만 고립시켜 빠르게 반복
   검증할 수 있다.
+
+**2026-10-02 — Claude in Chrome 확장이 이번 세션에는 실제로 연결돼 있었다 (위 09-09/09-17
+기록과 달리). 먼저 `tabs_context_mcp`로 시도해볼 것:**
+
+- 위쪽 기록들은 "확장이 연결 안 됨"을 전제로 CDP를 직접 쓰는 우회법을 설명하는데, 이번
+  세션(Next.js `yarn dev` 환경)에서는 `mcp__claude-in-chrome__tabs_context_mcp`/`navigate`/
+  `computer`/`javascript_tool`이 전부 정상 동작했다 — 즉 **연결 여부는 세션마다 다르다.**
+  앞으로는 CDP 수동 연결(websocket 직접 핸드셰이크 등)로 바로 가지 말고, `tabs_context_mcp
+  {createIfEmpty:true}`를 먼저 시도해 실패("Browser extension is not connected")할 때만
+  CDP 우회법으로 넘어갈 것.
+- **CSS 파일을 수정하고 dev 서버를 재시작해도, claude-in-chrome이 붙어 있던 탭의
+  `<link>` 스타일시트가 오래된 내용으로 캐시된 채 남아 `getComputedStyle()`에 반영되지
+  않는 경우가 있었다.** `curl`로 서버가 실제로 새 CSS(`word-break: keep-all` 등)를
+  서빙하고 있음을 직접 확인했는데도, 같은 탭에서 `navigate`로 재방문하거나 `fetch()`로
+  CSS 텍스트를 다시 받아봐도(그건 새 내용이 왔다) 브라우저가 **적용한** 스타일시트
+  (`document.styleSheets`의 `cssRules`)는 여전히 구버전이었다. `computer` 액션으로
+  `cmd+shift+r`(하드 리로드)를 보내야만 실제로 갱신됐다 — 일반 `navigate`/`location.reload()`
+  수준으로는 부족하다. **CSS를 고친 뒤 claude-in-chrome으로 검증할 때는 처음부터
+  하드 리로드를 한 번 끼워 넣는 것이 안전**하다.
+- **마우스 휠 `computer scroll` 액션이 같은 화면에서 여러 틱을 반복해도 전혀 움직이지
+  않다가(스크린샷이 완전히 동일), 그 다음 번 호출에서야 한꺼번에 크게 움직이는 패턴이
+  잦았다.** 특히 `window.scrollTo()`를 JS로 직접 호출하면 `window.scrollY` 값은 바뀌지만
+  화면은 갱신되지 않고 멈춰 있는 경우도 있었다(스무스 스크롤 CSS 때문으로 추정). 가장
+  안정적이었던 패턴은 **`element.scrollIntoView()`로 JS 스크롤을 먼저 건 다음, 곧바로
+  `computer scroll` 액션을 1~3틱 추가로 보내는 조합** — 이러면 실제 렌더가 따라붙는다.
+  sticky 헤더/히어로가 유령처럼 겹쳐 보이는 프레임(이전 기록들에 있는 "압축 결과가 덜
+  반영된" 증상)도 이 조합 뒤에는 대부분 저절로 사라졌다 — 실제 레이아웃 버그가 아니라
+  스크롤 직후 1~2프레임의 합성 지연이었다.
+- **How to apply:** claude-in-chrome으로 이 프로젝트를 검증할 때 (1) 세션마다 확장 연결
+  여부를 `tabs_context_mcp`로 먼저 확인, (2) CSS 수정 직후 검증 전 `cmd+shift+r` 하드
+  리로드를 습관적으로 끼워 넣기, (3) 스크롤이 한 번에 안 먹히면 재시도 전에
+  `scrollIntoView` + `computer scroll` 조합으로 바꾸기 — 이 세 가지만 지키면 대부분의
+  "화면이 안 바뀐 것처럼 보이는" 거짓 증상을 피할 수 있다.

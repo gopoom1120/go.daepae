@@ -103,3 +103,26 @@ Menu.tsx`의 "고기 종류 9가지" 섹션 소개 문구(`<p>`)와 셀프바 �
 바로 "없는 문구"로 단정하지 말고 관련 컴포넌트(`src/components/sections/*.tsx`)도 grep해서
 하드코딩 여부를 확인한다. content-editor 에이전트에게 위임할 때도 이 전제(JSON만 보면 못 찾는
 문구가 있을 수 있음)를 알려줄 것.
+
+**2026-10-02 — 새 섹션을 끼워넣을 때: "번호 있는 퍼널" vs "번호 없는 인터루드" kicker 체계,
+그리고 `.wave` 디바이더는 이제 완전히 죽은 CSS다**: `src/app/page.tsx`의 실제 렌더 순서는
+`Hero → Competitiveness → Menu → Reviews → Profit → PromiseBanner → Cost → Location`이다
+(REAL REVIEW가 PROFIT ANALYSIS보다 먼저 나온다 — 이름만 보고 순서를 가정하지 말 것). kicker를
+전부 grep해 확인한 결과, 이 프로젝트는 두 계열이 섞여 있다: **번호 있는 퍼널 섹션**(`01 ·
+COMPETITIVENESS` → `02 · MENU` → `03 · PROFIT ANALYSIS` → `04 · FRANCHISE COST` → `05 ·
+STORE LOCATIONS`)과, 그 사이사이에 번호 없이 끼어드는 **인터루드 섹션**(Reviews="REAL
+REVIEW", PromiseBanner="START FRANCHISE", 2026-10-02 신설된 Interior="STORE INTERIOR").
+인터루드 섹션은 `SiteHeader.tsx`의 `NAV_LINKS`에도 포함되지 않는다. **새 섹션을 추가할 때
+브랜드 비주얼/전환 유도용 인터루드라면 번호 없는 영문 kicker + NAV_LINKS 미등록으로 처리하면
+퍼널 번호(03/04/05)를 전혀 밀 필요가 없다** — Interior 섹션 추가 시 이 판단으로 Cost/Location의
+kicker 번호를 그대로 두었다.
+또한 전 `.tsx` 컴포넌트를 grep한 결과 `.wave` SVG 디바이더 클래스는 **어디에도 쓰이지 않는다
+(0건)** — [[gopumgyeok-design-system]]의 2026-09-04 기록("남은 웨이브는 `.wave--from-profit`
+단 하나뿐")은 그 시점(정적 사이트)까지의 사실이고, Next.js 이식 후에는 그 마지막 하나까지도
+어느 컴포넌트에서도 렌더링되지 않는 죽은 CSS가 됐다. CLAUDE.md의 "장식이 아니므로 섹션을
+재배치해도 유지한다"는 서술은 이제 실제 코드와 맞지 않는다 — 새 섹션 경계에 `.wave`를 넣어야
+한다고 가정하지 말 것(실제로 Interior 추가 때 이 사실을 확인하고 넣지 않았다).
+**How to apply**: 새 섹션을 두 기존 섹션 사이에 추가하기 전에 (1) `page.tsx`를 직접 읽어 실제
+렌더 순서를 확인하고, (2) 전 섹션의 kicker 패턴을 grep해 번호 재배치가 필요한지 판단하고,
+(3) `.wave`를 쓸지 말지는 CLAUDE.md 서술이 아니라 `grep -r "wave" src/components`로 직접
+확인해서 결정한다.

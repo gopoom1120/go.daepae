@@ -411,6 +411,7 @@ section {
   line-height: 1.35;
   color: var(--text);
   letter-spacing: -0.01em;
+  word-break: keep-all;
 }
 /* 섹션 타이틀 안에서 강조하는 문구는 빨간색으로 포인트를 준다(2026-09-02) — .comp-title 의
    .cline--accent 와 같은 의도, 색만 재사용하고 외곽선/그림자 처리는 이 타이틀들에는 넣지 않는다. */
@@ -798,6 +799,63 @@ section {
   background: var(--bg);
   --text: var(--text-invert);
 } /* 어두운 배경 — section-head h2, meat-label 이 밝은 글자를 쓰도록 */
+/* .wrap(max-width:1120px) 을 뚫고 뷰포트 양쪽 끝까지 꽉 채우는 풀블리드 배너
+   (2026-10-02) — .location-right 의 한쪽 bleed 공식과 달리 이쪽은 좌우 모두 뚫어야 하므로
+   더 단순한 100vw + calc(50% - 50vw) 트릭을 쓴다. init.css 의 body overflow-x:hidden 이
+   이 트릭이 만드는 수평 오버플로를 흡수해준다. aspect-ratio 를 그대로 쓰면 초광폭 모니터에서
+   배너가 과도하게 길어지므로 max-height 로 상한을 둔다. */
+.menu-banner {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  aspect-ratio: 21 / 9;
+  max-height: 520px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  margin-bottom: 48px;
+}
+/* 패럴랙스 — .hero-bg/.promise-bg 와 동일한 방식(배경만 뷰포트에 고정, 콘텐츠는 스크롤을
+   따라 지나간다). <img> 대신 배경 이미지로 바꿔야 background-attachment:fixed 가 먹는다. */
+.menu-banner__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url("/assets/imgs/menu_banner.jpg");
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: cover;
+  background-attachment: fixed;
+}
+/* iOS Safari 는 background-attachment:fixed 를 무시하고 배경이 깨져 보인다 — .hero-bg 와 동일 대응. */
+@media (max-width: 1024px), (hover: none) {
+  .menu-banner__bg {
+    background-attachment: scroll;
+  }
+}
+/* 배너 자체가 밝은 골드 톤이라 어두운 .menu 섹션 배경과 분리돼 보인다 — 검은 반투명
+   오버레이(색은 --bg 와 동일한 rgb)로 톤을 낮추고, 위아래 가장자리는 더 짙게 그라디언트를
+   줘서 섹션 배경에 자연스럽게 묶여 보이도록 한다. */
+.menu-banner__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    to bottom,
+    rgba(14, 12, 10, 0.6) 0%,
+    rgba(14, 12, 10, 0.25) 25%,
+    rgba(14, 12, 10, 0.25) 75%,
+    rgba(14, 12, 10, 0.6) 100%
+  );
+  pointer-events: none;
+}
+@media (max-width: 1024px) {
+  .menu-banner {
+    aspect-ratio: 16 / 9;
+    max-height: 360px;
+    margin-bottom: 32px;
+  }
+}
 .meat-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1001,6 +1059,9 @@ section {
 .review-item:nth-child(2) {
   margin-top: -28px;
 } /* 가운데 폰을 살짝 띄워 지그재그 리듬을 준다 */
+.review-item__link {
+  display: block;
+} /* <a> 기본 display:inline 이면 .review-badge/.review-phone 의 margin:auto 중앙 정렬이 깨진다 */
 
 /* 배지와 폰 사이 여백 — 겹치게(음수 margin) 했더니 배지가 카메라 노치를 가려 2026-09-08 다시 띄웠다. */
 .review-badge {
@@ -1056,6 +1117,33 @@ section {
   pointer-events: none;
 }
 
+/* 폰 카드 아래 네이버 리뷰 이동 버튼(2026-10-02) — 카드 전체(.review-item__link)가 이미
+   같은 링크로 걸려 있지만, "눌러야 할 곳"이 명확하지 않다는 피드백으로 명시적 버튼을
+   추가했다. .btn-primary(히어로 CTA)와 같은 골드 채움 톤을 쓰되, 카드 폭에 맞춰
+   더 작은 패딩/필 형태(border-radius:999px)로 축소했다. */
+.review-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 24px;
+  background: var(--gold);
+  color: #1b1608;
+  font-weight: 700;
+  font-size: clamp(20px, 1.6vw, 24px);
+  padding: 18px 40px;
+  border-radius: 999px;
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.2s ease;
+}
+.review-cta:hover {
+  background: var(--gold-light);
+  transform: translateY(-2px);
+}
+.review-cta::after {
+  content: "→";
+}
+
 @media (max-width: 1024px) {
   /* 2026-10-02, 2열(repeat(2,1fr))에서 배지 폭이 ~200px 로 좁아져 "시흥 은계점"/"왕십리 본점"
      같은 짧은 텍스트도 줄바꿈되는 문제로 1열로 변경 — 모바일에서는 매장 카드 3개를 한 줄에
@@ -1071,6 +1159,69 @@ section {
     font-size: 20px;
     padding: 14px 24px;
     white-space: nowrap;
+  }
+}
+
+/* INTERIOR — 매장 인테리어 소개, .profit 과 같은 밝은 배경 + 포토 카드 관례 재사용 */
+.interior {
+  background: var(--bg-card);
+  --text-dim: #6b6b6b;
+}
+.interior-gallery {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 20px;
+  margin-top: 8px;
+}
+.interior-gallery__feature {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.interior-gallery__feature img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.interior-gallery__sub {
+  grid-column: 2 / span 2;
+  grid-row: 1 / span 2;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 20px;
+}
+.interior-gallery__item {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  aspect-ratio: 4 / 3;
+}
+.interior-gallery__item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+@media (max-width: 1024px) {
+  .interior-gallery {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+  .interior-gallery__feature {
+    grid-column: 1;
+    grid-row: auto;
+    aspect-ratio: 16 / 9;
+  }
+  .interior-gallery__sub {
+    grid-column: 1;
+    grid-row: auto;
+    margin-top: 20px;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -1209,7 +1360,7 @@ section {
   font-family: "RixYeoljeongdo", "Pretendard", sans-serif;
   font-size: 18px;
   font-weight: 400;
-  border-radius: 2px;
+  border-radius: 16px;
 }
 .profit-badge b {
   color: var(--red);
@@ -2694,26 +2845,41 @@ footer {
 .footer-logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
 }
 .footer-logo img {
-  height: 28px;
-  border-radius: 3px;
+  height: 48px;
+  border-radius: 4px;
 }
 .footer-logo span {
   color: var(--gold-light);
   font-weight: 700;
-  font-size: 18px;
+  font-size: 28px;
 }
 footer .meta {
   color: var(--muted);
   font-size: 18px;
   line-height: 1.9;
 }
-footer .socials a {
-  color: var(--text-dim);
+/* 인스타그램 링크를 버튼처럼 — .hero-badge-phone 과 동일한 골드 아웃라인 필 배지 톤을
+   재사용한다(2026-10-02, "창업안내" 링크 제거와 함께). */
+footer .socials a.footer-instagram-btn {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(232, 205, 122, 0.45);
+  border-radius: 999px;
+  padding: 10px 22px;
+  background: rgba(201, 162, 39, 0.08);
+  color: var(--gold-light);
   font-size: 18px;
-  margin-left: 18px;
+  font-weight: 600;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+footer .socials a.footer-instagram-btn:hover {
+  background: rgba(201, 162, 39, 0.18);
+  border-color: var(--gold);
 }
 @media (max-width: 1024px) {
   footer {

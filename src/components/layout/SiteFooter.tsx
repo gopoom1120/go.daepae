@@ -19,10 +19,10 @@ export function SiteFooter() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`인스타그램 ${instagram} (새 창)`}
+            className="footer-instagram-btn"
           >
             Instagram
           </a>
-          <a href="#">창업안내</a>
         </div>
       </div>
     </footer>

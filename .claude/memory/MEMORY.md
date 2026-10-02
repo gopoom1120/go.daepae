@@ -5,7 +5,7 @@
 - [디자인 시스템](gopumgyeok-design-system.md) — 골드/레드 토큰(--bg-card는 흰색), Pretendard self-host+RixYeoljeongdo, 5섹션+히어로+문의 Bottom Sheet. 2026-10-01 #profit만 다크→흰 배경 전환, CLAUDE.md 다크섹션 목록 불일치 주의
 - [shadcn 재설계 후 원복](gopumgyeok-shadcn-detour-reverted.md) — 2026-09-04 shadcn 전면 재설계했다가 같은 날 골드/레드로 되돌림, CLAUDE.md 등 문서는 아직 shadcn 기준(불일치 주의)
 - [히어로 sticky 패럴랙스](gopumgyeok-hero-parallax.md) — z-index·웨이브 투과 함정(nav-toggle도 재발, 2026-10-01). iOS Safari fixed 요소 유령 잔상 버그와 translateZ(0) 대응도 기록
-- [헤드리스 시각 검증법](gopumgyeok-headless-verification.md) — 브라우저 확장 없음, CDP 직접 접속으로 라이브 캡처. --screenshot 단발 캡처는 스크롤 리빌 요소에서 거짓 오버플로우를 만듦(2026-10-01), 작은 아이콘 확대는 LANCZOS로(2026-09-24)
+- [헤드리스 시각 검증법](gopumgyeok-headless-verification.md) — 확장 연결 여부는 세션마다 다름(2026-10-02 연결 확인됨, 먼저 tabs_context_mcp로 시도). CSS 수정 후엔 cmd+shift+r 하드리로드 필수, 스크롤은 scrollIntoView+computer scroll 조합. --screenshot 단발 캡처는 스크롤 리빌 요소에서 거짓 오버플로우를 만듦(2026-10-01), 작은 아이콘 확대는 LANCZOS로(2026-09-24)
 - [영수증 카드(폐기됨)](gopumgyeok-receipt-card.md) — 2026-10-01 파이차트 카드로 완전 교체, 과거 마크업 더 이상 존재 안 함. "원" 단위 생략·cqw 폰트 패턴만 유효하게 승계
 - [브랜드 원본 데이터](gopumgyeok-brand-data.md) — 슬로건·메뉴 9종·셀프바 25종·3개 매장 매출/수익률·연락처. 2026-09-27 셀프바도 메뉴처럼 jpg→투명배경 AI png 전환(24종, 원본 jpg 디스크에서 소실)
 - [미해결 항목](gopumgyeok-open-issues.md) — 창업비용 금액 미확보, 메뉴+셀프바 png 총 44~50MB 미최적화, CLAUDE.md "셀프바 8종만 노출" 기술이 이제 오래된 정보 (CMS 백엔드는 2026-09-28 배포 확인됨)
@@ -16,5 +16,5 @@
 - [빠른 반복 디자인 요청 대응](feedback_rapid-iteration-design-requests.md) — 짧은 연속 요청으로 한 요소를 여러 번 재디자인할 때: 기존 keyframe 이름 재사용, 단순함으로 수렴하는 경향, 국소 변경엔 풀 검증 생략, 레퍼런스가 구조적으로 다르면 AskUserQuestion으로 범위부터 확인
 - [CSS 전역vs로컬 스코프 특이성 함정](feedback_css-specificity-scoped-vs-global.md) — 05 폼은 전역 label/input 셀렉터, 문의 모달은 같은 태그를 로컬 재스코프 — 공용 컴포넌트는 속성 전부를 다시 선언해야 한다
 - [CMS 백오피스 연동 완료](gopumgyeok-cms-integration.md) — 2026-09-17, 문의폼 실전송+팝업 신규 구현, script.js가 dataFetch.js/regexr.js로 분리(CLAUDE.md 미반영 주의)
-- [Next.js 마이그레이션](gopumgyeok-nextjs-migration.md) — 2026-09-22 세팅+이식, 2026-09-24 구 정적 사이트 완전 삭제(Next.js만 남음), Vercel Git 자동배포 확인, metadataBase는 dev 서버로 검증 불가, 일부 섹션 카피는 content.json 아닌 JSX 하드코딩(2026-10-01)
+- [Next.js 마이그레이션](gopumgyeok-nextjs-migration.md) — 2026-09-22 세팅+이식, 2026-09-24 구 정적 사이트 완전 삭제(Next.js만 남음), Vercel Git 자동배포 확인, metadataBase는 dev 서버로 검증 불가, 일부 섹션 카피는 content.json 아닌 JSX 하드코딩(2026-10-01). 2026-10-02: kicker 번호 있는 퍼널 vs 번호 없는 인터루드 섹션 체계, .wave 디바이더는 이제 완전히 죽은 CSS(0건)
 - [CMS API CORS 화이트리스트](gopumgyeok-cms-api-cors.md) — 실서버 도메인(랜딩/admin 서브도메인) 확정값, curl은 정상인데 브라우저만 막히는 CORS 함정, 2026-09-28 ALLOWED_ORIGINS 수정
