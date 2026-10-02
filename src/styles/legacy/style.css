@@ -127,12 +127,24 @@ header.nav.scrolled {
     padding-left: 20px;
     padding-right: 20px;
   }
+  /* .nav-links 가 position:fixed 풀스크린 패널이라 메뉴가 열리면 .nav-logo(위치 지정 없는
+     형제)를 그대로 덮어버린다 — .nav-toggle 과 같은 이유로 z-index 를 올려 패널 위에
+     그려지게 한다(2026-10-02, 열린 메뉴 상단에 로고가 보이지 않던 버그 수정). */
+  .nav-logo {
+    position: relative;
+    z-index: 1;
+  }
+  /* 메뉴가 열리면 로고가 흰 플라이아웃 패널(.nav-links) 위에 그려지므로, 어두운 헤더
+     배경용 골드 글자(--gold-light) 대신 .nav-links 와 같은 기본 어두운 글자색을 쓴다. */
+  header.nav.nav-open .nav-logo {
+    color: var(--text);
+  }
   .nav-links {
     position: fixed;
     top: 0;
     right: 0;
     height: 100vh;
-    width: min(280px, 72vw);
+    width: 100%;
     background: var(--bg-card);
     flex-direction: column;
     justify-content: center;

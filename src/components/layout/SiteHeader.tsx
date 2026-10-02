@@ -27,6 +27,10 @@ export function SiteHeader() {
   }, []);
 
   useEffect(() => {
+    document.body.style.overflow = navOpen ? "hidden" : "";
+  }, [navOpen]);
+
+  useEffect(() => {
     const sections = Array.from(document.querySelectorAll<HTMLElement>("section[id]"));
     if (!sections.length) return;
 
