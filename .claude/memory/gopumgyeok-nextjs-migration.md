@@ -1,6 +1,6 @@
 ---
 name: gopumgyeok-nextjs-migration
-description: "고품격대패 랜딩의 Next.js 마이그레이션 — 2026-09-22 환경세팅+콘텐츠 이식, 2026-09-24 구 정적 사이트(index.html/assets/data) 완전 삭제로 Next.js가 유일한 소스가 됨"
+description: "고품격대패 랜딩의 Next.js 마이그레이션 — 2026-09-22 환경세팅+콘텐츠 이식, 2026-09-24 구 정적 사이트(index.html/assets/data) 완전 삭제로 Next.js가 유일한 소스가 됨, 2026-10-21 네이버 서치어드바이저 SEO 세팅(robots.ts/sitemap.ts/verification) 및 제출 함정 3가지"
 metadata:
   type: project
 ---
@@ -126,3 +126,36 @@ kicker 번호를 그대로 두었다.
 렌더 순서를 확인하고, (2) 전 섹션의 kicker 패턴을 grep해 번호 재배치가 필요한지 판단하고,
 (3) `.wave`를 쓸지 말지는 CLAUDE.md 서술이 아니라 `grep -r "wave" src/components`로 직접
 확인해서 결정한다.
+
+**2026-10-21 — 네이버 서치어드바이저 SEO 세팅 완료, App Router 메타데이터 API 패턴 확정**:
+`src/app/layout.tsx`의 `metadata.verification.other`에 네이버 사이트 소유확인 코드
+(`naver-site-verification`)를 추가했고, `src/app/robots.ts`/`src/app/sitemap.ts`를 Next.js
+App Router 컨벤션(`MetadataRoute.Robots`/`MetadataRoute.Sitemap` 반환하는 함수형 파일)으로
+새로 만들었다 — `<meta>` 태그나 정적 `public/robots.txt`를 직접 쓰지 않는다. 도메인은
+`layout.tsx`의 `SITE_URL`(`https://xn--i89a2dz9q2p1bhpb.com`, 고품격대패.com의 punycode)과
+항상 일치시킨다. `sitemap.ts`는 `src/app`에 `page.tsx` 하나뿐인 단일 페이지 랜딩이라 홈 경로
+1건만 등록했다. `robots.ts`는 `disallow` 없이 전체 허용만 둔다 — 이 프로젝트엔 `/admin` 같은
+실제 비공개 경로가 없다(관리자모드는 `go.daepae.cms.api` 별도 저장소다).
+
+네이버 서치어드바이저 제출 중 겪은 함정 두 가지(앞으로 "네이버에서 에러 난다"는 보고를 받으면
+먼저 이 두 가지부터 의심할 것):
+1. **"사이트맵/RSS 형식이 올바르지 않습니다"** — `sitemap.ts` 배포 직후 Vercel 전파가 끝나기
+   전에 제출하면 뜬다. 실제 파일은 멀쩡했고(`xmllint` 통과, `content-type: application/xml`),
+   잠시 후 재제출하면 해결됨. 코드를 의심하기 전에 배포 타이밍부터 확인한다.
+2. **"접근 실패 — URL .../rss, Status 404"** — 이 사이트는 블로그/뉴스가 아닌 1페이지 랜딩이라
+   RSS 피드 자체가 없다(만들 계획도 없음). 네이버 서치어드바이저의 RSS 제출란은 비워두면 된다 —
+   사이트맵만 제출 대상이다.
+3. **Open Graph/페이지 설명 80자 제한** — 네이버 서치어드바이저가 `페이지 설명`과
+   `Open Graph 설명`을 **80자 이내**로 요구한다(위반 시 노란 느낌표 경고). `layout.tsx`의
+   `SITE_DESCRIPTION` 상수 하나를 `metadata.description`과 `openGraph.description` 양쪽에서
+   공유하므로, 이 상수만 80자 이내로 줄이면 두 경고가 동시에 해결된다. 81자였던 원문에서
+   "친환경 브랜드"·"이상" 같은 수식어를 빼 70자로 줄였다(의미 손실 최소화 우선, 숫자/고유명사는
+   유지).
+
+**Why**: 사용자가 네이버 서치어드바이저 화면 캡처를 붙여가며 순차적으로 에러를 보고하는 방식으로
+작업했다 — 코드 수정이 아니라 "네이버 콘솔이 뭐라는지"가 작업 단위였다. 다음에 비슷한 캡처가
+오면 위 3가지 패턴부터 대조하면 왕복을 줄일 수 있다.
+**How to apply**: 네이버 서치어드바이저 관련 에러 스크린샷을 받으면, 먼저 `curl -i`로 실제
+배포된 `robots.txt`/`sitemap.xml`을 확인해 코드 문제인지 전파 지연인지부터 가른다. 그다음
+"페이지 설명"/"Open Graph 설명" 경고는 `layout.tsx`의 `SITE_DESCRIPTION` 글자 수(80자 제한)
+문제일 가능성이 높다는 걸 먼저 의심한다.
