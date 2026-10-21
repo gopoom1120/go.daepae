@@ -25,6 +25,11 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: SITE_TITLE,
   description: SITE_DESCRIPTION,
+  verification: {
+    other: {
+      "naver-site-verification": "caef8e91c53d8fdec032f3a2c3549d05ca11089e",
+    },
+  },
   openGraph: {
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
