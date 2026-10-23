@@ -15,6 +15,7 @@ import { InquiryFab } from "@/components/inquiry/InquiryFab";
 import { InquirySheet } from "@/components/inquiry/InquirySheet";
 import { StickyInquiryBar } from "@/components/inquiry/StickyInquiryBar";
 import { CmsPopupModal } from "@/components/popup/CmsPopupModal";
+import { PostHogProvider } from "@/components/analytics/PostHogProvider";
 
 const SITE_URL = "https://xn--i89a2dz9q2p1bhpb.com";
 const SITE_TITLE = "고품격대패 대패의 격이 다르다";
@@ -52,6 +53,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ko">
       <body>
+        <PostHogProvider />
         <SiteHeader />
         {children}
         <InquiryFab />

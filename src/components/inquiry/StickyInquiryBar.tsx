@@ -5,6 +5,7 @@ import { SelectField } from "@/components/inquiry/SelectField";
 import { PhoneInput } from "@/components/inquiry/PhoneInput";
 import { FRANCHISE_TYPE_OPTIONS } from "@/components/inquiry/franchiseTypes";
 import { useInquirySubmit } from "@/hooks/useInquirySubmit";
+import { track } from "@/libs/analytics";
 
 const initialValues = {
   name: "",
@@ -41,7 +42,11 @@ export function StickyInquiryBar() {
       role="complementary"
       aria-label="가맹 문의"
     >
-      <a className="sticky-inquiry-brand" href="tel:18771960">
+      <a
+        className="sticky-inquiry-brand"
+        href="tel:18771960"
+        onClick={() => track("contact_click", { type: "tel", source: "sticky_bar" })}
+      >
         <img src="/assets/imgs/logo_gold.png" alt="" />
         <strong>가맹 문의 1877-1960</strong>
       </a>

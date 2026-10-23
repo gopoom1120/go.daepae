@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { dataFetch } from "@/libs/api";
+import { track } from "@/libs/analytics";
 
 export type InquiryPayload = {
   name: string;
@@ -45,6 +46,7 @@ export function useInquirySubmit(successText = "접수되었습니다") {
     }
 
     if (res.ok) {
+      track("inquiry_submit", { franchise_type: payload.franchiseType });
       setStatus("success");
       timeoutRef.current = setTimeout(() => {
         setStatus("idle");

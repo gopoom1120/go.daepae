@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
+import { track } from "@/libs/analytics";
 
 const EVENT_NAME = "open-inquiry-sheet";
 
 /** 헤더/히어로/창업비용/05 CTA/FAB 등 여러 위치의 버튼이 InquirySheet 를 열도록 트리거한다 */
 export function openInquirySheet() {
+  track("inquiry_open");
   window.dispatchEvent(new CustomEvent(EVENT_NAME));
 }
 
