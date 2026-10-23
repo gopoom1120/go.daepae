@@ -19,3 +19,4 @@
 - [Next.js 마이그레이션](gopumgyeok-nextjs-migration.md) — 2026-09-22 세팅+이식, 2026-09-24 구 정적 사이트 완전 삭제(Next.js만 남음), Vercel Git 자동배포 확인, metadataBase는 dev 서버로 검증 불가, 일부 섹션 카피는 content.json 아닌 JSX 하드코딩(2026-10-01). 2026-10-02: kicker 번호 있는 퍼널 vs 번호 없는 인터루드 섹션 체계, .wave 디바이더는 이제 완전히 죽은 CSS(0건). 2026-10-21: robots.ts/sitemap.ts/네이버 verification 세팅 + 서치어드바이저 제출 함정(배포 전파 지연, RSS 불필요, 설명 80자 제한)
 - [CMS API CORS 화이트리스트](gopumgyeok-cms-api-cors.md) — 실서버 도메인(랜딩/admin 서브도메인) 확정값, curl은 정상인데 브라우저만 막히는 CORS 함정, 2026-09-28 ALLOWED_ORIGINS 수정
 - [PostHog 분석 연동](gopumgyeok-posthog-analytics.md) — 2026-10-23 posthog-js 수동 연결(마법사는 Next 14 미지원), 이벤트 3종, NEXT_PUBLIC 재배포 함정, 프로덕션 확인 대기
+- [문의 접수 완료 팝업](project_inquiry-success-popup.md) — 2026-10-23, 시트/인라인/스티키 공용 완료 팝업, 다크 섹션 안에서 --text 상속으로 글자 안 보이는 함정, 버튼 문구 '문의하기' 통일
