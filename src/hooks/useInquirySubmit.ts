@@ -18,6 +18,8 @@ type Status = "idle" | "sending" | "success" | "error";
 export function useInquirySubmit(successText = "접수되었습니다") {
   const [status, setStatus] = useState<Status>("idle");
   const [errorText, setErrorText] = useState<string | null>(null);
+  /** 접수 완료 팝업 노출 여부 — 버튼 글자 복귀(2.5초)와 별개로 사용자가 닫을 때까지 유지 */
+  const [done, setDone] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -48,6 +50,7 @@ export function useInquirySubmit(successText = "접수되었습니다") {
     if (res.ok) {
       track("inquiry_submit", { franchise_type: payload.franchiseType });
       setStatus("success");
+      setDone(true);
       timeoutRef.current = setTimeout(() => {
         setStatus("idle");
         onSuccess();
@@ -71,5 +74,7 @@ export function useInquirySubmit(successText = "접수되었습니다") {
 
   const disabled = status === "sending" || status === "success";
 
-  return { status, disabled, buttonText, submit };
+  const dismiss = () => setDone(false);
+
+  return { status, done, dismiss, disabled, buttonText, submit };
 }

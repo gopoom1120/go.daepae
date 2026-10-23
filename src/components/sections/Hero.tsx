@@ -21,7 +21,7 @@ export function Hero() {
         </p>
         <div className="hero-cta-group">
           <button type="button" className="btn-primary" onClick={openInquirySheet}>
-            창업 문의하기
+            문의하기
           </button>
           <a
             className="btn-ghost"

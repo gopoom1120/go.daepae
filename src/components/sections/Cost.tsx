@@ -47,7 +47,7 @@ export function Cost({ cost }: CostProps) {
           </p>
         </div>
         <button type="button" className="btn-primary cost-cta" onClick={openInquirySheet}>
-          정확한 비용 상담받기
+          문의하기
         </button>
       </div>
     </section>

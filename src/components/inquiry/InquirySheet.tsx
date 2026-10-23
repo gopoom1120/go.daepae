@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { SelectField } from "@/components/inquiry/SelectField";
+import { InquirySuccessContent } from "@/components/inquiry/InquirySuccess";
 import { PhoneInput } from "@/components/inquiry/PhoneInput";
 import { FRANCHISE_TYPE_OPTIONS } from "@/components/inquiry/franchiseTypes";
 import { useInquirySubmit } from "@/hooks/useInquirySubmit";
@@ -25,13 +26,14 @@ export function InquirySheet() {
   const [visible, setVisible] = useState(false);
   const [open, setOpen] = useState(false);
   const [values, setValues] = useState(initialValues);
-  const { disabled, buttonText, submit } = useInquirySubmit();
+  const { done, dismiss, disabled, buttonText, submit } = useInquirySubmit();
   const lastFocusedRef = useRef<HTMLElement | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const typeLabelId = useId();
   const titleId = useId();
 
   const openSheet = () => {
+    dismiss();
     lastFocusedRef.current = document.activeElement as HTMLElement;
     setVisible(true);
     requestAnimationFrame(() => setOpen(true));
@@ -112,6 +114,7 @@ export function InquirySheet() {
             <path d="M18 6 6 18M6 6l12 12" />
           </svg>
         </button>
+        {done && <InquirySuccessContent onClose={closeSheet} />}
         <div className="inquiry-sheet-scroll">
           <div className="inquiry-sheet-brand">
             <img src="/assets/imgs/logo_gold.png" alt="고품격대패" />
@@ -212,7 +215,7 @@ export function InquirySheet() {
           className="inquiry-sheet-submit"
           disabled={disabled}
         >
-          {buttonText("문의 남기기")}
+          {buttonText("문의하기")}
           <svg
             viewBox="0 0 24 24"
             fill="none"

@@ -2,6 +2,7 @@
 
 import { useId, useState, type FormEvent } from "react";
 import { SelectField } from "@/components/inquiry/SelectField";
+import { InquirySuccessModal } from "@/components/inquiry/InquirySuccess";
 import { PhoneInput } from "@/components/inquiry/PhoneInput";
 import { FRANCHISE_TYPE_OPTIONS } from "@/components/inquiry/franchiseTypes";
 import { useInquirySubmit } from "@/hooks/useInquirySubmit";
@@ -23,7 +24,7 @@ const initialValues = {
 /** 05 매장위치 맨 아래 문의 폼 */
 export function InlineInquiryForm({ contact }: InlineInquiryFormProps) {
   const [values, setValues] = useState(initialValues);
-  const { disabled, buttonText, submit } = useInquirySubmit();
+  const { done, dismiss, disabled, buttonText, submit } = useInquirySubmit();
   const typeLabelId = useId();
 
   const handleSubmit = (e: FormEvent) => {
@@ -151,9 +152,10 @@ export function InlineInquiryForm({ contact }: InlineInquiryFormProps) {
           </a>
         </div>
         <button className="submit-btn" type="submit" disabled={disabled}>
-          {buttonText("문의 남기기")}
+          {buttonText("문의하기")}
         </button>
       </form>
+      <InquirySuccessModal open={done} onClose={dismiss} />
     </div>
   );
 }

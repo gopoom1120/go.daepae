@@ -77,7 +77,7 @@ export function SiteHeader() {
         ))}
       </nav>
       <button type="button" className="nav-cta" onClick={openInquirySheet}>
-        창업 상담
+        문의하기
       </button>
       <button
         type="button"
