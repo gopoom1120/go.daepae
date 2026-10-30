@@ -1722,8 +1722,8 @@ section {
 .location-right {
   margin-right: min(-32px, calc(528px - 50vw));
 }
-/* gap 은 최소 여백 보장용 — 1024px 이하(모바일 1열 스택)에서는 좌측 컬럼이 우측과 높이를
-   공유하지 않아 space-between 이 분배할 여유 공간이 없으므로 이 gap 값이 곧 실제 간격이 된다. */
+/* gap 은 데스크톱 2열에서 최소 여백 보장용 — 1024px 이하에서는 .location-left 가
+   display:contents 라 이 gap 이 적용되지 않고, 간격은 .location-layout 의 gap(32px)이 정한다. */
 .location-left {
   display: flex;
   flex-direction: column;
@@ -1900,6 +1900,19 @@ section {
      bleed 시키면 카드가 어색하게 잘린다 — .wrap 폭 그대로 유지한다. */
   .location-right {
     margin-right: 0;
+    order: 1;
+  }
+  /* 모바일 순서: 타이틀 → 이미지 캐러셀 → 매장 캡션/컨트롤. .location-left 를 contents 로 풀어
+     자식(.section-head/.store-bottom)이 그리드 아이템이 되게 하고 order 로 재배치한다. */
+  .location-left {
+    display: contents;
+  }
+  /* 기본 margin-bottom:64px 가 그리드 gap(32px)에 더해져 타이틀~이미지 사이가 너무 벌어진다. */
+  .location-left .section-head {
+    margin-bottom: 0;
+  }
+  .store-bottom {
+    order: 2;
   }
 }
 
