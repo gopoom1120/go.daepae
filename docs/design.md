@@ -202,7 +202,7 @@
   (매장 캐러셀)만 `.wrap` 을 뚫고 나가 뷰포트 오른쪽 끝까지 채운다 — `.location-left`(타이틀·설명·
   컨트롤 버튼)와 하단 문의 폼(`.inquiry-grid`)은 그대로 `.wrap` 안에 머문다. 자세한 내용은 아래
   "매장위치 캐러셀" 절 참고.
-- **섹션 리듬**: `section{ padding:120px 0; }`, 섹션 헤드(`.section-head`)는 `margin-bottom:64px`,
+- **섹션 리듬**: `section{ padding:120px 0; }`(모바일 ≤1024px 은 `70px 0`, `.promise` 도 70px), 섹션 헤드(`.section-head`)는 `margin-bottom:64px`,
   `max-width:640px` 로 본문보다 좁게 잡아 타이틀 가독성을 확보한다.
 - **그리드** (전부 아래 단일 브레이크포인트 기준):
   - 경쟁력 카드: 3열(PC) → 1열(모바일)

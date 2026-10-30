@@ -389,6 +389,11 @@ section {
   position: relative;
   scroll-margin-top: 84px;
 }
+@media (max-width: 1024px) {
+  section {
+    padding: 70px 0;
+  }
+}
 .section-head {
   margin-bottom: 64px;
   max-width: 640px;
@@ -1564,7 +1569,7 @@ section {
 @media (max-width: 1024px) {
   .promise {
     min-height: auto;
-    padding: 80px 0;
+    padding: 70px 0;
   }
 }
 
