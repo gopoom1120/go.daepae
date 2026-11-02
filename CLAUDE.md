@@ -94,7 +94,7 @@ npx tsc --noEmit  # 타입체크만
 - 색은 `style.css` `:root` 토큰(11개)에서 가져온다. 새 색을 하드코딩하지 않는다(정확한 값은
   `docs/design.md`).
 - **폰트 크기는 18px~96px 범위만 허용**(고정값·`clamp()` 최소/최대 모두). 예외는 `.hero-wordmark`,
-  `.form-agree`/`.form-agree-more`(16px), 문의 시트 폼 내부 전체(14px) 세 곳뿐이며 다른 요소로 유추
+  `.form-agree`/`.form-agree-more`(16px), `footer .footer-bottom`(16px, 사용자 요청), 문의 시트 폼 내부 전체(14px) 네 곳뿐이며 다른 요소로 유추
   확장하지 않는다.
 - 스크롤 리빌은 `useScrollReveal`(IntersectionObserver, 한 번만 `in-view` 부여)·`useInView` 훅.
 

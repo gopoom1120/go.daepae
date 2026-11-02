@@ -21,3 +21,4 @@
 - [PostHog 분석 연동](gopumgyeok-posthog-analytics.md) — 2026-10-23 posthog-js 수동 연결(마법사는 Next 14 미지원), 이벤트 3종, NEXT_PUBLIC 재배포 함정, 프로덕션 확인 대기
 - [문의 접수 완료 팝업](project_inquiry-success-popup.md) — 2026-10-23, 시트/인라인/스티키 공용 완료 팝업, 다크 섹션 안에서 --text 상속으로 글자 안 보이는 함정, 버튼 문구 '문의하기' 통일
 - [커밋 전 코드 리뷰 필수](feedback_review-before-commit.md) — 2026-10-23, 커밋/푸시 요청 시 /code-review 먼저, 설정·문서만 바뀌어도 생략 금지
+- [dev 포트 충돌](gopumgyeok-dev-port-collision.md) — localhost:3000 이 다른 프로젝트일 수 있음. 렌더 검증 전 title 확인, 별도 포트(3107)로 띄우기

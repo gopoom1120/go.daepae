@@ -136,7 +136,7 @@
   별개(디스플레이용 고딕 계열이라 저촉되지 않음)다. 섹션 타이틀 밖(본문, 라벨, 버튼 등)으로는
   확장하지 않는다.
 - **크기 범위 규칙(2026-09-02 확정, 2026-09-03 `.hero-wordmark` 예외 추가, 2026-09-11
-  `.form-agree`/`.form-agree-more` 예외 추가, 2026-09-17 `.inquiry-sheet-form` 예외 추가)**:
+  `.form-agree`/`.form-agree-more` 예외 추가, 2026-09-17 `.inquiry-sheet-form` 예외 추가, 2026-11-02 `footer .footer-bottom` 예외 추가)**:
   **`font-size` 는 18px 이상 96px 이하다.**
   라벨·배지·각주·폼 힌트처럼 전통적으로 "잔글씨"였던 자리도 예외 없이 18px 이상이다. 새 요소를
   추가할 때 이 범위를 벗어나는 값을 쓰고 싶다면 — 쓰지 말고 18~96px 안으로 맞출 것. 이 규칙
@@ -155,8 +155,11 @@
     써서 유독 커 보이는 불일치가 있었다. 2026-09-17 사용자 요청으로 전역 18px 로 올리는 대신
     이 폼 안의 select-field 두 셀렉터를 기존 14px 에 맞췄다 — `.inquiry-sheet-form` 스코프
     밖의 다른 select-field(05 인라인 폼·`.sticky-inquiry-bar`)는 여전히 18px 그대로다. 18px
-    미만 예외는 `.form-agree`/`.form-agree-more`와 이 `.inquiry-sheet-form` 스코프뿐이며,
-    다른 곳에 유추 확장하지 않는다.
+    미만 예외는 `.form-agree`/`.form-agree-more`, 이 `.inquiry-sheet-form` 스코프,
+    `footer .footer-bottom` 뿐이며, 다른 곳에 유추 확장하지 않는다.
+  - 푸터 맨 아래 줄(`footer .footer-bottom`: "Copyrights ©고품격대패. All Right Reserved" +
+    "CREATED BY GOSPELFIX" 외부 링크)은 2026-11-02 사용자가 글자를 더 작게 요청해 `16px` 로
+    확정됐다. 색은 `--muted`(호버 시 `--gold-light`), 상단 `--line` 구분선, ≤1024px 에서는 세로로 쌓인다.
 - **스케일**: 반응형 요소는 `clamp(min, vw, max)`(단, `min` ≥ 18px, `max` ≤ 96px), 고정 요소는
   px 리터럴(18~96px)을 쓴다 — 미디어쿼리로 폰트 크기를 계단식으로 바꾸지 않는다.
 
@@ -179,6 +182,7 @@
 |---|---|
 | 22px | 경쟁력 타이틀 상단 별 장식(`.comp-stars`) |
 | 16px | 동의 체크박스 라벨/"전문보기" 링크(`.form-agree`, `.form-agree-more`) — 18px 하한 규칙의 두 번째 예외(2026-09-11) |
+| 16px | 푸터 하단 저작권/제작자 줄(`footer .footer-bottom`) — 세 번째 예외(2026-11-02) |
 | 14px | `.inquiry-sheet-form` 안의 `label`/`input`/`select`/`textarea`/`.select-field-trigger`/`.select-field-item` — 18px 하한 규칙의 세 번째 예외, 이 폼 스코프 안으로 한정(2026-09-17) |
 | 20px | `.nav-logo` |
 | 19px | 경쟁력 카드 타이틀(`.comp-card h3`), 트러스트 배지 카드 타이틀(`.trust-item h5`) |

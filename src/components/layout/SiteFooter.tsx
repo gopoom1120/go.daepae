@@ -11,7 +11,6 @@ export function SiteFooter() {
         </div>
         <div className="meta">
           고품격대패 · 창업문의 1877-1960
-          <br />© gopoomgyeok daepae. All rights reserved.
         </div>
         <div className="socials">
           <a
@@ -24,6 +23,17 @@ export function SiteFooter() {
             Instagram
           </a>
         </div>
+      </div>
+      <div className="wrap footer-bottom">
+        <span>Copyrights ©고품격대패. All Right Reserved</span>
+        <a
+          href="https://gospelfix-ashy.vercel.app/layer"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="CREATED BY GOSPELFIX (새 창)"
+        >
+          CREATED BY GOSPELFIX
+        </a>
       </div>
     </footer>
   );
