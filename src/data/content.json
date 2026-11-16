@@ -42,39 +42,39 @@
   ],
   "meat": [
     {
-      "image": "/assets/imgs/meat_modum.png",
+      "image": "/assets/imgs/meat_modum.avif",
       "name": "모듬 한판"
     },
     {
-      "image": "/assets/imgs/meat_dwaeji.png",
-      "name": "돼지 한판"
+      "image": "/assets/imgs/meat_7mm.avif",
+      "name": "7mm 대패"
     },
     {
-      "image": "/assets/imgs/meat_ori_dwaeji.png",
-      "name": "오리&돼지 한판"
+      "image": "/assets/imgs/meat_thousand.avif",
+      "name": "천겹살 대패"
     },
     {
-      "image": "/assets/imgs/meat_samgyeop.png",
+      "image": "/assets/imgs/meat_samgyeop.avif",
       "name": "삼겹 대패"
     },
     {
-      "image": "/assets/imgs/meat_byeol.png",
-      "name": "뽈항정 대패"
-    },
-    {
-      "image": "/assets/imgs/meat_kkot_samgyeop.png",
+      "image": "/assets/imgs/meat_kkot_samgyeop.avif",
       "name": "꽃삼겹 대패"
     },
     {
-      "image": "/assets/imgs/meat_kkot_moksal.png",
+      "image": "/assets/imgs/meat_kkot_moksal.avif",
       "name": "꽃목살 대패"
     },
     {
-      "image": "/assets/imgs/meat_kkot_deungsim.png",
-      "name": "++꽃등심 대패"
+      "image": "/assets/imgs/meat_wagyu.avif",
+      "name": "와규 대패"
     },
     {
-      "image": "/assets/imgs/meat_ori.png",
+      "image": "/assets/imgs/meat_fire.avif",
+      "name": "불 대패"
+    },
+    {
+      "image": "/assets/imgs/meat_ori.avif",
       "name": "오리 대패"
     }
   ],
