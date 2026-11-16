@@ -7,7 +7,7 @@
 - [히어로 sticky 패럴랙스](gopumgyeok-hero-parallax.md) — z-index·웨이브 투과 함정(nav-toggle도 재발, 2026-10-01). iOS Safari fixed 요소 유령 잔상 버그와 translateZ(0) 대응도 기록
 - [헤드리스 시각 검증법](gopumgyeok-headless-verification.md) — 확장 연결 여부는 세션마다 다름(2026-10-02 연결 확인됨, 먼저 tabs_context_mcp로 시도). CSS 수정 후엔 cmd+shift+r 하드리로드 필수, 스크롤은 scrollIntoView+computer scroll 조합. --screenshot 단발 캡처는 스크롤 리빌 요소에서 거짓 오버플로우를 만듦(2026-10-01), 작은 아이콘 확대는 LANCZOS로(2026-09-24)
 - [영수증 카드(폐기됨)](gopumgyeok-receipt-card.md) — 2026-10-01 파이차트 카드로 완전 교체, 과거 마크업 더 이상 존재 안 함. "원" 단위 생략·cqw 폰트 패턴만 유효하게 승계
-- [브랜드 원본 데이터](gopumgyeok-brand-data.md) — 슬로건·메뉴 9종·셀프바 25종·3개 매장 매출/수익률·연락처. 2026-09-27 셀프바도 메뉴처럼 jpg→투명배경 AI png 전환(24종, 원본 jpg 디스크에서 소실)
+- [브랜드 원본 데이터](gopumgyeok-brand-data.md) — 슬로건·메뉴 9종·셀프바 25종·3개 매장 매출/수익률·연락처. 2026-09-27 셀프바 jpg→png 전환(24종). 2026-11-16 메뉴 고기 9종 avif로 전면 교체(신규 4종 이름은 추정, 클라이언트 확인 필요)
 - [미해결 항목](gopumgyeok-open-issues.md) — 창업비용 금액 미확보, 메뉴+셀프바 png 총 44~50MB 미최적화, CLAUDE.md "셀프바 8종만 노출" 기술이 이제 오래된 정보 (CMS 백엔드는 2026-09-28 배포 확인됨)
 - [소비자 찐후기·창업 안내 배너](gopumgyeok-reviews-and-promise-sections.md) — 02.5/03.5 신규 섹션, 아이폰 목업 좌표 재계산 절차, 여백 피드백이 프레임 버전마다 뒤집힌 이력
 - [리뷰 이미지 축소 렌더링 버그(미해결)](gopumgyeok-review-image-scaling-bug.md) — review1.png만 브라우저 축소 시 텍스트 뭉개짐, 원인 특정 전 작업 중단됨
